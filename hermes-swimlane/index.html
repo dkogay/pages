@@ -5,1452 +5,1533 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Activat VC — Swimlane-карта бизнес-процессов</title>
 <style>
-:root {
-  --agent: #2563eb;
-  --agent-bg: #eff6ff;
-  --human: #059669;
-  --human-bg: #ecfdf5;
-  --external: #d97706;
-  --external-bg: #fffbeb;
-  --trigger: #7c3aed;
-  --trigger-bg: #f5f3ff;
-  --priority-1: #dc2626;
-  --priority-2: #ea580c;
-  --priority-3: #ca8a04;
-  --priority-4: #6b7280;
-  --border: #e5e7eb;
-  --bg: #f9fafb;
-  --card-bg: #ffffff;
-}
+  :root {
+    --bg: #FAFAF7;
+    --surface: #FFFFFF;
+    --text: #2C2C2A;
+    --text-muted: #5F5E5A;
+    --text-light: #888780;
+    --border: rgba(0,0,0,0.1);
+    --border-strong: rgba(0,0,0,0.2);
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+    --c-team-bg: #E6F1FB;
+    --c-team-stroke: #185FA5;
+    --c-team-text: #0C447C;
 
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: var(--bg);
-  color: #1f2937;
-  line-height: 1.5;
-}
+    --c-agent-bg: #E1F5EE;
+    --c-agent-stroke: #0F6E56;
+    --c-agent-text: #085041;
 
-header {
-  background: linear-gradient(135deg, #1e3a5f, #0f172a);
-  color: white;
-  padding: 2rem;
-  text-align: center;
-}
+    --c-ext-bg: #FBEAF0;
+    --c-ext-stroke: #993556;
+    --c-ext-text: #72243E;
 
-header h1 { font-size: 1.8rem; margin-bottom: 0.5rem; }
-header p { opacity: 0.8; font-size: 0.95rem; }
+    --c-sys-bg: #F1EFE8;
+    --c-sys-stroke: #5F5E5A;
+    --c-sys-text: #2C2C2A;
 
-.legend {
-  display: flex;
-  gap: 1.5rem;
-  justify-content: center;
-  padding: 1rem 2rem;
-  background: white;
-  border-bottom: 1px solid var(--border);
-  flex-wrap: wrap;
-  font-size: 0.85rem;
-}
+    --c-decision-bg: #FAEEDA;
+    --c-decision-stroke: #854F0B;
+    --c-decision-text: #633806;
 
-.legend-item {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-}
+    --branch-bg: linear-gradient(135deg, #1e3a5f, #0f172a);
+    --priority-1: #dc2626;
+    --priority-2: #ea580c;
+    --priority-3: #ca8a04;
+    --priority-4: #6b7280;
+  }
 
-.legend-dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  display: inline-block;
-}
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); }
 
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 1.5rem;
-}
+  .root {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    color: var(--text);
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 32px 24px 80px;
+    font-size: 15px;
+    line-height: 1.55;
+    background: var(--bg);
+  }
 
-.strategy-branch {
-  margin-bottom: 2rem;
-}
+  .root h1 { font-size: 28px; font-weight: 500; margin: 0 0 8px; }
+  .root h2 { font-size: 20px; font-weight: 500; margin: 48px 0 16px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+  .root h3 { font-size: 17px; font-weight: 500; margin: 24px 0 8px; }
+  .root p { margin: 8px 0 16px; }
 
-.branch-header {
-  background: linear-gradient(135deg, #1e3a5f, #334155);
-  color: white;
-  padding: 1rem 1.5rem;
-  border-radius: 8px 8px 0 0;
-  font-size: 1.1rem;
-  font-weight: 600;
-}
+  .subtitle { color: var(--text-muted); margin-bottom: 24px; }
 
-.branch-header small {
-  display: block;
-  opacity: 0.8;
-  font-weight: 400;
-  font-size: 0.85rem;
-  margin-top: 0.25rem;
-}
+  .intro-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin: 16px 0 32px;
+  }
 
-.sub-branch {
-  background: #f1f5f9;
-  padding: 0.75rem 1.5rem;
-  font-weight: 600;
-  font-size: 0.95rem;
-  border-left: 3px solid #1e3a5f;
-  color: #334155;
-}
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 12px;
+    margin: 16px 0 32px;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    text-align: center;
+  }
+  .stat-number { font-size: 26px; font-weight: 600; color: #1e3a5f; }
+  .stat-label { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
 
-.process-card {
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: 0 0 8px 8px;
-  margin-bottom: 1rem;
-  overflow: hidden;
-}
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    padding: 16px 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin: 16px 0;
+  }
+  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+  .legend-swatch { width: 14px; height: 14px; border-radius: 3px; border: 1px solid; }
 
-.process-card + .process-card {
-  border-radius: 8px;
-}
+  /* Matrix */
+  .matrix-wrapper { overflow-x: auto; margin: 16px 0 32px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); }
+  .matrix {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 13px;
+  }
+  .matrix th, .matrix td {
+    border: 1px solid var(--border);
+    padding: 6px 8px;
+    vertical-align: middle;
+  }
+  .matrix th {
+    background: #F5F3EC;
+    font-weight: 500;
+    text-align: left;
+  }
+  .matrix th.rotated {
+    white-space: nowrap;
+    text-align: left;
+    min-width: 36px;
+    max-width: 36px;
+    width: 36px;
+    height: 140px;
+    padding: 4px;
+    vertical-align: bottom;
+  }
+  .matrix th.rotated > span {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    display: block;
+    font-weight: 400;
+    font-size: 12px;
+  }
+  .matrix td.role-cell { text-align: center; font-size: 15px; min-width: 36px; }
+  .matrix td.process-name { font-weight: 500; min-width: 260px; font-size: 12.5px; }
+  .matrix td.process-idx { width: 36px; text-align: center; color: var(--text-muted); font-size: 12px; }
+  .matrix tr.branch-row td { background: #EEEAE0; font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.3px; color: #1e3a5f; }
+  .owner-dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: var(--c-team-stroke); }
+  .part-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #B5D4F4; }
+  .ext-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #ED93B1; }
+  .agent-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #5DCAA5; }
 
-.process-header {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid var(--border);
-  flex-wrap: wrap;
-}
+  /* TOC */
+  .toc {
+    padding: 16px 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin: 16px 0 32px;
+  }
+  .toc-branch {
+    font-weight: 600;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #1e3a5f;
+    padding: 12px 0 4px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 6px;
+  }
+  .toc-branch:first-child { padding-top: 0; }
+  .toc-subbranch {
+    font-weight: 500;
+    font-size: 13px;
+    color: var(--text-muted);
+    padding: 10px 0 4px;
+    margin-left: 4px;
+  }
+  .toc-items {
+    columns: 2;
+    column-gap: 32px;
+  }
+  .toc-item { padding: 3px 0; break-inside: avoid; font-size: 14px; }
+  .toc-item a { color: var(--text); text-decoration: none; display: inline-flex; align-items: baseline; gap: 6px; }
+  .toc-item a:hover { text-decoration: underline; color: var(--c-team-stroke); }
+  .toc-num { color: var(--text-light); display: inline-block; width: 28px; }
 
-.process-name {
-  font-weight: 600;
-  font-size: 1rem;
-  flex: 1;
-  min-width: 200px;
-}
+  /* Branch banner */
+  .branch-banner {
+    background: var(--branch-bg);
+    color: white;
+    padding: 20px 24px;
+    border-radius: 8px;
+    margin: 48px 0 16px;
+  }
+  .branch-banner h2 {
+    margin: 0;
+    border: none;
+    color: white;
+    font-size: 22px;
+    font-weight: 600;
+    padding-bottom: 4px;
+  }
+  .branch-banner small {
+    display: block;
+    opacity: 0.85;
+    font-weight: 400;
+    font-size: 13px;
+    margin-top: 4px;
+  }
+  .subbranch-banner {
+    background: #F5F3EC;
+    border-left: 4px solid #1e3a5f;
+    color: #1e3a5f;
+    padding: 10px 16px;
+    font-weight: 600;
+    font-size: 14px;
+    margin: 24px 0 12px;
+    border-radius: 0 4px 4px 0;
+  }
 
-.badge {
-  font-size: 0.7rem;
-  padding: 0.2rem 0.6rem;
-  border-radius: 999px;
-  font-weight: 600;
-  text-transform: uppercase;
-  white-space: nowrap;
-}
+  /* Process card */
+  .process {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 22px 26px;
+    margin: 16px 0;
+    scroll-margin-top: 24px;
+  }
+  .process-header { margin-bottom: 14px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .process-title { font-size: 17px; font-weight: 500; margin: 0; flex: 1; min-width: 240px; }
+  .process-meta {
+    font-size: 13px;
+    color: var(--text-muted);
+    width: 100%;
+    margin-top: 6px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+  .process-meta span { display: inline-block; }
+  .process-meta strong { color: var(--text); font-weight: 500; }
 
-.badge-new { background: #dbeafe; color: #1d4ed8; }
-.badge-existing { background: #d1fae5; color: #065f46; }
-.badge-merged { background: #fef3c7; color: #92400e; }
+  .priority-badge {
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: 700;
+    color: white;
+    letter-spacing: 0.3px;
+  }
+  .p1 { background: var(--priority-1); }
+  .p2 { background: var(--priority-2); }
+  .p3 { background: var(--priority-3); }
+  .p4 { background: var(--priority-4); }
 
-.priority-badge {
-  font-size: 0.75rem;
-  padding: 0.2rem 0.5rem;
-  border-radius: 4px;
-  font-weight: 700;
-  color: white;
-}
+  .badge {
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    white-space: nowrap;
+  }
+  .badge-new { background: #dbeafe; color: #1d4ed8; }
+  .badge-existing { background: #d1fae5; color: #065f46; }
+  .badge-merged { background: #fef3c7; color: #92400e; }
 
-.p1 { background: var(--priority-1); }
-.p2 { background: var(--priority-2); }
-.p3 { background: var(--priority-3); }
-.p4 { background: var(--priority-4); }
+  .phase-title {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 18px 0 6px;
+  }
 
-.swimlane {
-  padding: 1rem;
-}
+  /* Swimlane */
+  .swimlane-wrapper {
+    overflow-x: auto;
+    background: #FCFBF7;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px;
+    margin: 8px 0 14px;
+  }
+  .swimlane { display: block; min-width: 600px; max-width: 100%; }
 
-.swim-row {
-  display: flex;
-  align-items: stretch;
-  margin-bottom: 0.5rem;
-  min-height: 2.5rem;
-}
+  /* Steps table */
+  .steps-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin: 14px 0 8px;
+  }
+  .steps-table th, .steps-table td {
+    border: 1px solid var(--border);
+    padding: 7px 9px;
+    vertical-align: top;
+    text-align: left;
+  }
+  .steps-table th {
+    background: #F5F3EC;
+    font-weight: 500;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: var(--text-muted);
+  }
+  .steps-table td.num { width: 32px; text-align: center; color: var(--text-muted); }
+  .steps-table td.actor { width: 140px; }
+  .steps-table td.auto { width: 100px; }
+  .phase-row td {
+    background: #F5F3EC;
+    font-weight: 500;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: var(--text-muted);
+  }
 
-.swim-label {
-  width: 140px;
-  min-width: 140px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 0.4rem 0.5rem;
-  border-radius: 4px 0 0 4px;
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-}
+  .actor-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 500;
+    border: 1px solid;
+  }
+  .tag-team { background: var(--c-team-bg); border-color: var(--c-team-stroke); color: var(--c-team-text); }
+  .tag-agent { background: var(--c-agent-bg); border-color: var(--c-agent-stroke); color: var(--c-agent-text); }
+  .tag-ext { background: var(--c-ext-bg); border-color: var(--c-ext-stroke); color: var(--c-ext-text); }
+  .tag-sys { background: var(--c-sys-bg); border-color: var(--c-sys-stroke); color: var(--c-sys-text); }
+  .tag-decision { background: var(--c-decision-bg); border-color: var(--c-decision-stroke); color: var(--c-decision-text); }
 
-.swim-label.trigger { background: var(--trigger-bg); color: var(--trigger); border-left: 3px solid var(--trigger); }
-.swim-label.agent { background: var(--agent-bg); color: var(--agent); border-left: 3px solid var(--agent); }
-.swim-label.human { background: var(--human-bg); color: var(--human); border-left: 3px solid var(--human); }
-.swim-label.external { background: var(--external-bg); color: var(--external); border-left: 3px solid var(--external); }
+  .auto-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+  .auto-full { background: #E1F5EE; color: #085041; }
+  .auto-mixed { background: #FAEEDA; color: #633806; }
+  .auto-manual { background: #F1EFE8; color: #2C2C2A; }
 
-.swim-content {
-  flex: 1;
-  padding: 0.4rem 0.75rem;
-  font-size: 0.85rem;
-  background: #fafafa;
-  border: 1px solid #f0f0f0;
-  border-radius: 0 4px 4px 0;
-  display: flex;
-  align-items: center;
-}
+  .note-block {
+    background: #FFFBEB;
+    border-left: 3px solid #D97706;
+    padding: 8px 12px;
+    margin: 10px 0;
+    font-size: 13px;
+    color: #92400E;
+    border-radius: 0 4px 4px 0;
+  }
 
-.arrow {
-  text-align: center;
-  color: #9ca3af;
-  font-size: 0.8rem;
-  padding: 0.1rem 0;
-  margin-left: 70px;
-}
+  .back-top {
+    display: inline-block;
+    font-size: 12px;
+    color: var(--text-muted);
+    text-decoration: none;
+    margin-top: 8px;
+  }
+  .back-top:hover { color: var(--c-team-stroke); }
 
-.process-footer {
-  padding: 0.5rem 1rem;
-  font-size: 0.8rem;
-  color: #6b7280;
-  border-top: 1px solid var(--border);
-  display: flex;
-  gap: 1.5rem;
-  flex-wrap: wrap;
-}
+  .legend-bottom {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin: 48px 0 24px;
+  }
+  .legend-bottom h3 { margin-top: 0; }
+  .legend-bottom-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px 24px;
+    margin-top: 12px;
+  }
+  .legend-bottom-item { font-size: 13px; }
+  .legend-bottom-item strong { display: block; margin-bottom: 4px; color: var(--text); }
+  .legend-bottom-item .swatch-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
 
-.process-footer span { white-space: nowrap; }
+  @media print {
+    .root { max-width: none; padding: 0; }
+    .process { break-inside: avoid; page-break-inside: avoid; }
+    .swimlane-wrapper { break-inside: avoid; }
+  }
 
-.section-divider {
-  height: 2px;
-  background: linear-gradient(90deg, transparent, #cbd5e1, transparent);
-  margin: 2rem 0;
-}
-
-.toc {
-  background: white;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 1.5rem;
-  margin-bottom: 2rem;
-}
-
-.toc h2 { font-size: 1.1rem; margin-bottom: 1rem; }
-
-.toc-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: 0.5rem;
-}
-
-.toc-item {
-  font-size: 0.85rem;
-  padding: 0.3rem 0;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.toc-item a {
-  color: #1e3a5f;
-  text-decoration: none;
-}
-.toc-item a:hover { text-decoration: underline; }
-
-.stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 1rem;
-  margin-bottom: 2rem;
-}
-
-.stat-card {
-  background: white;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 1rem;
-  text-align: center;
-}
-
-.stat-number { font-size: 2rem; font-weight: 700; color: #1e3a5f; }
-.stat-label { font-size: 0.8rem; color: #6b7280; }
-
-.note {
-  background: #fffbeb;
-  border-left: 3px solid #d97706;
-  padding: 0.5rem 0.75rem;
-  font-size: 0.8rem;
-  margin: 0.5rem 1rem;
-  border-radius: 0 4px 4px 0;
-  color: #92400e;
-}
-
-@media (max-width: 768px) {
-  .swim-label { width: 100px; min-width: 100px; font-size: 0.65rem; }
-  .swim-content { font-size: 0.8rem; }
-  .process-header { flex-direction: column; align-items: flex-start; }
-  .legend { font-size: 0.75rem; gap: 0.75rem; }
-  .toc-grid { grid-template-columns: 1fr; }
-}
+  @media (max-width: 768px) {
+    .toc-items { columns: 1; }
+    .root { padding: 16px 12px 60px; }
+  }
 </style>
 </head>
 <body>
 
-<header>
+<div class="root" id="top">
   <h1>Activat VC — Swimlane-карта бизнес-процессов</h1>
-  <p>Полная карта AI-автоматизации на основе стратегии развития компании</p>
-  <p style="opacity:0.6; font-size:0.8rem; margin-top:0.5rem;">Версия 2.0 | 14 мая 2026</p>
-</header>
+  <p class="subtitle">Полная карта AI-автоматизации на основе стратегии развития компании · Версия 2.0 · 14 мая 2026</p>
 
-<div class="legend">
-  <div class="legend-item"><span class="legend-dot" style="background:var(--trigger)"></span> Триггер</div>
-  <div class="legend-item"><span class="legend-dot" style="background:var(--agent)"></span> AI-агент (Hermes)</div>
-  <div class="legend-item"><span class="legend-dot" style="background:var(--human)"></span> Сотрудник</div>
-  <div class="legend-item"><span class="legend-dot" style="background:var(--external)"></span> Внешняя система / сторона</div>
+  <div class="intro-card">
+    <p><strong>Как читать этот документ.</strong> Карта построена вокруг трёх ветвей стратегии Activat VC: прибыль от стартапов, прибыль от инвесторов и операционная жизнедеятельность. Каждый процесс показан как swimlane-диаграмма (колонки = участники, шаги сверху вниз) и таблица с деталями. <span class="actor-tag tag-team">Синие</span> — сотрудники Activat VC, <span class="actor-tag tag-agent">зелёные</span> — AI-агент Hermes, <span class="actor-tag tag-ext">розовые</span> — внешние стороны (стартапы, инвесторы, скауты), <span class="actor-tag tag-sys">серые</span> — внешние системы (Bitrix24, Brevo, DocuSign, Buffer), <span class="actor-tag tag-decision">жёлтые</span> — точки одобрения.</p>
+    <p>В начале — статистика, сводная матрица участников и навигационное оглавление. Дальше — все 40 процессов в порядке ветвей стратегии. Каждый процесс имеет приоритет (П1—П4), статус (новый / существующий / объединённый) и ссылку на конкретный пункт стратегии. Кликайте по номерам в оглавлении для перехода к процессу.</p>
+  </div>
+
+  <div class="stats">
+    <div class="stat-card"><div class="stat-number">40</div><div class="stat-label">Процессов всего</div></div>
+    <div class="stat-card"><div class="stat-number">3</div><div class="stat-label">Ветви стратегии</div></div>
+    <div class="stat-card"><div class="stat-number">17</div><div class="stat-label">Прибыль от стартапов</div></div>
+    <div class="stat-card"><div class="stat-number">7</div><div class="stat-label">Прибыль от инвесторов</div></div>
+    <div class="stat-card"><div class="stat-number">9</div><div class="stat-label">Жизнедеятельность</div></div>
+    <div class="stat-card"><div class="stat-number">7</div><div class="stat-label">Сквозные процессы</div></div>
+  </div>
+
+  <h2>Легенда (краткая)</h2>
+  <div class="legend">
+    <div class="legend-item"><span class="legend-swatch" style="background: var(--c-team-bg); border-color: var(--c-team-stroke);"></span>Сотрудник Activat VC</div>
+    <div class="legend-item"><span class="legend-swatch" style="background: var(--c-agent-bg); border-color: var(--c-agent-stroke);"></span>AI-агент Hermes</div>
+    <div class="legend-item"><span class="legend-swatch" style="background: var(--c-ext-bg); border-color: var(--c-ext-stroke);"></span>Внешнее лицо (стартап, инвестор, скаут)</div>
+    <div class="legend-item"><span class="legend-swatch" style="background: var(--c-sys-bg); border-color: var(--c-sys-stroke);"></span>Внешняя система</div>
+    <div class="legend-item"><span class="legend-swatch" style="background: var(--c-decision-bg); border-color: var(--c-decision-stroke);"></span>Точка одобрения</div>
+    <div class="legend-item"><span class="auto-tag auto-full">Агент</span>— полностью агент</div>
+    <div class="legend-item"><span class="auto-tag auto-mixed">Смешано</span>— человек + агент</div>
+    <div class="legend-item"><span class="auto-tag auto-manual">Человек</span>— только человек</div>
+    <div class="legend-item"><span class="priority-badge p1">П1</span><span class="priority-badge p2">П2</span><span class="priority-badge p3">П3</span><span class="priority-badge p4">П4</span>— приоритет внедрения</div>
+  </div>
+
+  <h2>Сводная матрица: участники × процессы</h2>
+  <p style="font-size: 13px; color: var(--text-muted);"><span class="owner-dot"></span> владелец процесса &nbsp; <span class="part-dot"></span> участник из команды &nbsp; <span class="agent-dot"></span> агент участвует &nbsp; <span class="ext-dot"></span> внешнее лицо</p>
+  <div class="matrix-wrapper">
+    <table class="matrix" id="matrix"></table>
+  </div>
+
+  <h2>Оглавление</h2>
+  <div class="toc" id="toc"></div>
+
+  <div id="processes"></div>
+
+  <div class="legend-bottom">
+    <h3>Развёрнутая легенда</h3>
+    <div class="legend-bottom-grid">
+      <div class="legend-bottom-item">
+        <strong>Цвета участников</strong>
+        <div class="swatch-row"><span class="actor-tag tag-team">Сотрудник</span> CEO, Associate, Маркетолог, Дмитрий и т.д.</div>
+        <div class="swatch-row"><span class="actor-tag tag-agent">Агент</span> AI-агент Hermes (вся автоматика)</div>
+        <div class="swatch-row"><span class="actor-tag tag-ext">Внешний</span> стартап, инвестор, скаут, подрядчик</div>
+        <div class="swatch-row"><span class="actor-tag tag-sys">Система</span> Bitrix24, Brevo, DocuSign, Calendly, Buffer</div>
+      </div>
+      <div class="legend-bottom-item">
+        <strong>Уровень автоматизации</strong>
+        <div class="swatch-row"><span class="auto-tag auto-full">Агент</span> шаг выполняет агент полностью без участия человека</div>
+        <div class="swatch-row"><span class="auto-tag auto-mixed">Смешано</span> совместное действие: агент готовит, человек одобряет/корректирует</div>
+        <div class="swatch-row"><span class="auto-tag auto-manual">Человек</span> только человек — агент не вовлечён</div>
+      </div>
+      <div class="legend-bottom-item">
+        <strong>Приоритеты внедрения</strong>
+        <div class="swatch-row"><span class="priority-badge p1">П1</span> критично, внедряется в первую очередь</div>
+        <div class="swatch-row"><span class="priority-badge p2">П2</span> высокий приоритет, второй слой</div>
+        <div class="swatch-row"><span class="priority-badge p3">P3</span> средний приоритет</div>
+        <div class="swatch-row"><span class="priority-badge p4">П4</span> низкий приоритет / поддерживающий</div>
+      </div>
+      <div class="legend-bottom-item">
+        <strong>Статус процесса</strong>
+        <div class="swatch-row"><span class="badge badge-new">новый</span> процесс не существовал — добавлен из стратегии</div>
+        <div class="swatch-row"><span class="badge badge-existing">существующий</span> процесс был на карте 28 процессов</div>
+        <div class="swatch-row"><span class="badge badge-merged">объединённый</span> склейка нескольких процессов в один</div>
+      </div>
+      <div class="legend-bottom-item">
+        <strong>Особые маркеры на диаграммах</strong>
+        <div class="swatch-row"><span class="actor-tag tag-decision">одобрение</span> точка принятия решения — рамка с пунктиром</div>
+        <div class="swatch-row"><span style="display:inline-block;width:24px;height:14px;background:#FFFBEB;border-left:3px solid #D97706;"></span> блок «Примечание» — комментарии из аудио учредителя</div>
+      </div>
+      <div class="legend-bottom-item">
+        <strong>Источник данных</strong>
+        <ul style="margin: 4px 0 0 18px; padding: 0; font-size: 13px;">
+          <li>Карта 28 процессов (брейнштормы команды)</li>
+          <li>Аудиокомментарии учредителя</li>
+          <li>Стратегия развития Activat VC</li>
+          <li>Документ функций маркетинга</li>
+          <li>Таблица Синдиката от Ануара</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align:center; padding:24px 0 0; color: var(--text-light); font-size: 12px;">
+    <p>Activat VC — Swimlane-карта бизнес-процессов v2.0 · Сгенерировано 14 мая 2026</p>
+  </div>
+
 </div>
 
-<div class="container">
-
-<!-- Stats -->
-<div class="stats">
-  <div class="stat-card"><div class="stat-number">38</div><div class="stat-label">Процессов всего</div></div>
-  <div class="stat-card"><div class="stat-number">14</div><div class="stat-label">Новых процессов</div></div>
-  <div class="stat-card"><div class="stat-number">24</div><div class="stat-label">Существующих (обновлены)</div></div>
-  <div class="stat-card"><div class="stat-number">3</div><div class="stat-label">Ветви стратегии</div></div>
-</div>
-
-<!-- ============================================================= -->
-<!-- BRANCH 1: ПРИБЫЛЬ ОТ СТАРТАПОВ -->
-<!-- ============================================================= -->
-
-<div class="strategy-branch">
-<div class="branch-header">
-  1. Получить прибыль от стартапов — $1 225 000
-  <small>1г: $205K | 2г: $408K | 3г: $612K</small>
-</div>
-
-<!-- 1.1.1 ЛИДОГЕНЕРАЦИЯ -->
-<div class="sub-branch">1.1.1. Привлечь 3 000 лидов от стартапов (1г: 800, 2г: 1000, 3г: 1200)</div>
-
-<!-- P1: Скауты -->
-<div class="process-card" id="p1">
-  <div class="process-header">
-    <span class="priority-badge p2">П2</span>
-    <span class="process-name">Привлечение лидов через скаутов</span>
-    <span class="badge badge-new">новый</span>
-  </div>
-  <div class="swimlane">
-    <div class="swim-row"><div class="swim-label trigger">📅 Триггер</div><div class="swim-content">Cron ежеквартально (план по скаутам) + постоянный мониторинг лидов</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Web search: поиск потенциальных скаутов (венчурные аналитики, бизнес-консультанты, акселераторы) → формирование шортлиста с профилями</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label human">👤 CEO</div><div class="swim-content">Рассмотрение шортлиста → одобрение кандидатов для контакта</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Генерация персонализированных писем → отправка приглашений (Brevo) → трекинг ответов</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label human">👤 CEO</div><div class="swim-content">Переговоры со скаутами → заключение договоров</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Подготовка учебных материалов для скаутов → размещение на сайте (Playwright)</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label external">🏢 Скауты</div><div class="swim-content">Присылают лиды → агент регистрирует в Bitrix24 с тегом «от скаута»</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Первичный скрининг лидов → передача в воронку (→ процесс «Скрининг заявок»)</div></div>
-  </div>
-  <div class="process-footer">
-    <span>📍 Стратегия: 1.1.1.1</span>
-    <span>👤 Владелец: CEO</span>
-    <span>🔁 Частота: ежеквартально</span>
-    <span>🏁 Результат: лиды в воронке</span>
-  </div>
-</div>
-
-<!-- P2: Собственные мероприятия -->
-<div class="process-card" id="p2">
-  <div class="process-header">
-    <span class="priority-badge p2">П2</span>
-    <span class="process-name">Организация собственных мероприятий</span>
-    <span class="badge badge-existing">существующий</span>
-  </div>
-  <div class="swimlane">
-    <div class="swim-row"><div class="swim-label trigger">📅 Триггер</div><div class="swim-content">По запросу (multi-step) → #ai-events</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label human">👤 Исмаил</div><div class="swim-content">Инициирует: тема, формат, дата, целевая аудитория</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Формирование концепции → поиск площадок и партнёров → подготовка коммерческих предложений спонсорам</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Параллельно: рассылка приглашений стартапам (Brevo) И инвесторам → трекинг ответов</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label external">🏢 Стартапы / Инвесторы</div><div class="swim-content">Регистрация → ответы возвращаются к агенту</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label human">👤 Associate</div><div class="swim-content">Подготовка участников: помощь с питч-деками, анализ качества презентаций</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Координация: Calendly, напоминания, рассылки → день мероприятия</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Пост-мероприятие: отчётный пост, фото/видео обработка → публикация (Buffer API)</div></div>
-  </div>
-  <div class="note">⚠️ Исправлено: рассылка стартапам и инвесторам — параллельные процессы. Подготовку участников делает associate, не Исмаил.</div>
-  <div class="process-footer">
-    <span>📍 Стратегия: 1.1.1.2</span>
-    <span>👤 Владелец: Исмаил → Associate</span>
-    <span>🔁 Частота: по запросу</span>
-    <span>🏁 Результат: проведённое мероприятие + лиды</span>
-  </div>
-</div>
-
-<!-- P3: Чужие мероприятия -->
-<div class="process-card" id="p3">
-  <div class="process-header">
-    <span class="priority-badge p2">П2</span>
-    <span class="process-name">Участие в чужих мероприятиях</span>
-    <span class="badge badge-existing">существующий</span>
-  </div>
-  <div class="swimlane">
-    <div class="swim-row"><div class="swim-label trigger">📅 Триггер</div><div class="swim-content">Cron еженедельно → #ai-events</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Парсинг мероприятий (web search) → сбор информации → оценка целесообразности → отправка владельцу процесса</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label human">👤 Исмаил</div><div class="swim-content">Рассмотрение и одобрение участия</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Запрос организатору → получение ответа</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label human">👤 Исмаил</div><div class="swim-content">Подтверждение при положительном ответе → запуск подготовки</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Подготовка речи + слайдов → передача владельцу → одобрение</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label human">👤 Участник</div><div class="swim-content">Получает готовые материалы (слайды ≠ материалы для публикации!)</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label human">👤 Исмаил</div><div class="swim-content">Заблаговременно даёт агенту описание мероприятия для подготовки постов</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label external">🏢 Участник</div><div class="swim-content">С мероприятия: фото, видео, голосовые → агенту</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Whisper-транскрибация → формирование постов → Buffer API</div></div>
-  </div>
-  <div class="process-footer">
-    <span>📍 Стратегия: 1.1.1.3</span>
-    <span>👤 Владелец: Исмаил</span>
-    <span>🔁 Частота: еженедельно</span>
-    <span>🏁 Результат: участие + контент</span>
-  </div>
-</div>
-
-<!-- P4: Акселераторы -->
-<div class="process-card" id="p4">
-  <div class="process-header">
-    <span class="priority-badge p3">П3</span>
-    <span class="process-name">Участие в акселераторах как спикеры</span>
-    <span class="badge badge-existing">существующий</span>
-  </div>
-  <div class="swimlane">
-    <div class="swim-row"><div class="swim-label trigger">📅 Триггер</div><div class="swim-content">Cron ежемесячно → поиск программ</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Web search: выявление акселераторов и программ → оценка релевантности → шортлист</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label human">👤 Исмаил</div><div class="swim-content">Одобрение целевых акселераторов</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Генерация писем организаторам → переговоры → координация участия</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Подготовка материалов для спикера → освещение в СМИ и соцсетях</div></div>
-  </div>
-  <div class="process-footer">
-    <span>📍 Стратегия: 1.1.1.4</span>
-    <span>👤 Владелец: Исмаил</span>
-    <span>🔁 Частота: ежемесячно</span>
-    <span>🏁 Результат: участие + лиды</span>
-  </div>
-</div>
-
-<!-- P5: СМИ -->
-<div class="process-card" id="p5">
-  <div class="process-header">
-    <span class="priority-badge p2">П2</span>
-    <span class="process-name">PR и работа со СМИ</span>
-    <span class="badge badge-new">новый</span>
-  </div>
-  <div class="swimlane">
-    <div class="swim-row"><div class="swim-label trigger">📅 Триггер</div><div class="swim-content">Cron ежемесячно + по событию (значимые новости компании)</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Web search: выявление профильных СМИ (венчурные, бизнес, стартап-экосистема) → актуализация базы контактов (SQLite)</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Подготовка тематических материалов: пресс-релизы, экспертные колонки, комментарии → передача маркетологу</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label human">👤 Маркетолог</div><div class="swim-content">Ревью и одобрение материалов</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Рассылка в редакции (email) → трекинг публикаций → отчёт в #ai-marketing</div></div>
-  </div>
-  <div class="process-footer">
-    <span>📍 Стратегия: 1.1.1.5</span>
-    <span>👤 Владелец: Маркетолог</span>
-    <span>🔁 Частота: ежемесячно</span>
-    <span>🏁 Результат: публикации в СМИ</span>
-  </div>
-</div>
-
-<!-- P6: Контент-план -->
-<div class="process-card" id="p6">
-  <div class="process-header">
-    <span class="priority-badge p1">П1</span>
-    <span class="process-name">Создание контент-плана</span>
-    <span class="badge badge-existing">существующий</span>
-  </div>
-  <div class="swimlane">
-    <div class="swim-row"><div class="swim-label trigger">📅 Триггер</div><div class="swim-content">Cron ежемесячно → таблица контент-плана</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Анализ исполнения контент-плана за прошлый месяц: охваты, вовлечённость, конверсия → рекомендации</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Генерация нового плана: разбивка по неделям, 3 поста/нед., предложения тем</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label human">👤 Маркетолог</div><div class="swim-content">Утверждение плана + заполнение метаданных (конкретные вводные: «пост про стартап X»)</div></div>
-  </div>
-  <div class="process-footer">
-    <span>📍 Стратегия: 1.1.1.6</span>
-    <span>👤 Владелец: Маркетолог</span>
-    <span>🔁 Частота: ежемесячно</span>
-    <span>🏁 Результат: утверждённый контент-план</span>
-  </div>
-</div>
-
-<!-- P7: Посты -->
-<div class="process-card" id="p7">
-  <div class="process-header">
-    <span class="priority-badge p1">П1</span>
-    <span class="process-name">Создание и публикация постов</span>
-    <span class="badge badge-existing">существующий</span>
-  </div>
-  <div class="swimlane">
-    <div class="swim-row"><div class="swim-label trigger">📅 Триггер</div><div class="swim-content">Cron по контент-плану (3 раза/нед.) — агент сам инициирует</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Проверяет контент-план → видит, что пост нужен → сам формирует: заголовок + текст + хештеги</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label human">👤 Маркетолог</div><div class="swim-content">Одобрение / правка текста → подготовка визуала вручную</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Публикация через Buffer API → Instagram, Telegram, LinkedIn</div></div>
-  </div>
-  <div class="note">⚠️ Исправлено: агент не ждёт пинка от маркетолога, а сам инициирует по контент-плану.</div>
-  <div class="process-footer">
-    <span>📍 Стратегия: 1.1.1.6</span>
-    <span>👤 Владелец: Маркетолог</span>
-    <span>🔁 Частота: 3 раза/нед.</span>
-    <span>🏁 Результат: опубликованный пост</span>
-  </div>
-</div>
-
-<!-- P8: Таргет -->
-<div class="process-card" id="p8">
-  <div class="process-header">
-    <span class="priority-badge p2">П2</span>
-    <span class="process-name">Таргетированная реклама в соцсетях</span>
-    <span class="badge badge-new">новый</span>
-  </div>
-  <div class="swimlane">
-    <div class="swim-row"><div class="swim-label trigger">📅 Триггер</div><div class="swim-content">Cron ежемесячно (анализ) + по запуску кампании</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Анализ целевой аудитории: сегментация по гео, интересам, поведению → рекомендации по таргетингу</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label human">👤 Маркетолог</div><div class="swim-content">Утверждение ЦА и бюджета кампании</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Генерация рекламных текстов и креативов → запуск кампаний (Meta Ads API / LinkedIn Ads)</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Мониторинг эффективности → A/B тесты → еженедельный отчёт маркетологу</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Обработка входящих лидов → регистрация в Bitrix24 → ответы на комментарии</div></div>
-  </div>
-  <div class="process-footer">
-    <span>📍 Стратегия: 1.1.1.7</span>
-    <span>👤 Владелец: Маркетолог</span>
-    <span>🔁 Частота: постоянно</span>
-    <span>🏁 Результат: лиды из рекламы</span>
-  </div>
-</div>
-
-<!-- P9: SEO -->
-<div class="process-card" id="p9">
-  <div class="process-header">
-    <span class="priority-badge p1">П1</span>
-    <span class="process-name">SEO/GEO-диагностика и оптимизация сайта</span>
-    <span class="badge badge-existing">существующий</span>
-  </div>
-  <div class="swimlane">
-    <div class="swim-row"><div class="swim-label trigger">📅 Триггер</div><div class="swim-content">Cron ежемесячно → DM владельцу</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Browser tool → SEO-аудит (технический + контентный) + GEO-аудит → отчёт с рекомендациями</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label human">👤 Дмитрий</div><div class="swim-content">Рассмотрение → одобрение рекомендаций</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Реализация простых изменений (Playwright) → технические → Дмитрий вручную</div></div>
-  </div>
-  <div class="note">⚠️ Исправлено: и SEO, и GEO делают полный аудит + оптимизацию (не только один аудит).</div>
-  <div class="process-footer">
-    <span>📍 Стратегия: 1.1.1.8</span>
-    <span>👤 Владелец: Дмитрий</span>
-    <span>🔁 Частота: ежемесячно</span>
-    <span>🏁 Результат: оптимизированный сайт</span>
-  </div>
-</div>
-
-<!-- 1.1.2 СКРИНИНГ -->
-<div class="sub-branch">1.1.2. Довести 450 стартапов до Инвесткомитета (1г: 125, 2г: 150, 3г: 175)</div>
-
-<!-- P10: Скрининг заявок -->
-<div class="process-card" id="p10">
-  <div class="process-header">
-    <span class="priority-badge p1">П1</span>
-    <span class="process-name">Скрининг и первичный анализ заявок стартапов</span>
-    <span class="badge badge-new">новый</span>
-  </div>
-  <div class="swimlane">
-    <div class="swim-row"><div class="swim-label trigger">📅 Триггер</div><div class="swim-content">Новая заявка в Bitrix24 (из любого канала лидогенерации)</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Автоматический скрининг: анализ команды, продукта, рынка, трекшна → скоринг по критериям ИК</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Web search: проверка стартапа (СМИ, соцсети, реестры) → дополнение профиля</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Классификация: перспективный / требует встречи / отклонить → рекомендация с обоснованием</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label human">👤 Associate</div><div class="swim-content">Ревью рекомендаций агента → проведение переговоров с перспективными стартапами</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label human">👤 Associate</div><div class="swim-content">Решение: вынести на ИК или отклонить → обновление статуса в Bitrix24</div></div>
-  </div>
-  <div class="process-footer">
-    <span>📍 Стратегия: 1.1.2</span>
-    <span>👤 Владелец: Associate</span>
-    <span>🔁 Частота: по поступлению</span>
-    <span>🏁 Результат: стартап на ИК или отклонён</span>
-  </div>
-</div>
-
-<!-- P11: Мониторинг стартапов -->
-<div class="process-card" id="p11">
-  <div class="process-header">
-    <span class="priority-badge p2">П2</span>
-    <span class="process-name">Мониторинг стартапов (до ИК)</span>
-    <span class="badge badge-existing">существующий</span>
-  </div>
-  <div class="swimlane">
-    <div class="swim-row"><div class="swim-label trigger">📅 Триггер</div><div class="swim-content">Входящий апдейт от стартапа + анализ по мере поступления</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label external">🏢 Стартап</div><div class="swim-content">/start в Telegram → онбординг → регулярные апдейты</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">После каждого апдейта: анализ динамики (не еженедельный!) → startup_updates в SQLite</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">При значимом росте → уведомление менеджеру с рекомендацией пригласить на ИК</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label human">👤 Associate</div><div class="swim-content">Одобрение → приглашение стартапа на ИК</div></div>
-  </div>
-  <div class="process-footer">
-    <span>📍 Стратегия: 1.1.2</span>
-    <span>👤 Владелец: Associate</span>
-    <span>🔁 Частота: по поступлению</span>
-    <span>🏁 Результат: стартап приглашён на ИК</span>
-  </div>
-</div>
-
-<!-- P12: ИК -->
-<div class="process-card" id="p12">
-  <div class="process-header">
-    <span class="priority-badge p2">П2</span>
-    <span class="process-name">Работа инвестиционного комитета</span>
-    <span class="badge badge-existing">существующий</span>
-  </div>
-  <div class="swimlane">
-    <div class="swim-row"><div class="swim-label trigger">📅 Триггер</div><div class="swim-content">Стартап одобрен для ИК (из процесса скрининга или мониторинга)</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Подготовка досье: сбор данных, финансовая модель, анализ рынка, конкуренты → пакет для ИК</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label human">👤 Бекжан</div><div class="swim-content">Координация стажёров, формулировка задач для AI-анализа</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label human">👤 Комитет</div><div class="swim-content">Рассмотрение → голосование → решение: DD / отклонить / мониторинг</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Фиксация решения в Bitrix24 → уведомление стартапу → маршрутизация в следующий процесс</div></div>
-  </div>
-  <div class="note">⚠️ Требует детализации от Бекжана</div>
-  <div class="process-footer">
-    <span>📍 Стратегия: 1.1.2–1.1.3</span>
-    <span>👤 Владелец: Бекжан</span>
-    <span>🔁 Частота: постоянно</span>
-    <span>🏁 Результат: решение по стартапу</span>
-  </div>
-</div>
-
-<!-- 1.1.3 DUE DILIGENCE -->
-<div class="sub-branch">1.1.3. Провести Due Diligence с 150 стартапами (1г: 40, 2г: 50, 3г: 60)</div>
-
-<div class="process-card" id="p13">
-  <div class="process-header">
-    <span class="priority-badge p2">П2</span>
-    <span class="process-name">Due Diligence стартапов</span>
-    <span class="badge badge-new">новый</span>
-  </div>
-  <div class="swimlane">
-    <div class="swim-row"><div class="swim-label trigger">📅 Триггер</div><div class="swim-content">Решение ИК: «направить на DD»</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Запрос документов у стартапа (чек-лист DD) → трекинг получения</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Анализ: юридическая проверка (реестры, судебные дела), финансовый анализ, верификация метрик, анализ рынка</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Формирование заключения DD с рисками и рекомендациями</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label human">👤 CEO / Associate</div><div class="swim-content">Ревью заключения → финальное решение: инвестировать / отклонить</div></div>
-  </div>
-  <div class="process-footer">
-    <span>📍 Стратегия: 1.1.3</span>
-    <span>👤 Владелец: Associate</span>
-    <span>🔁 Частота: по решению ИК</span>
-    <span>🏁 Результат: заключение DD</span>
-  </div>
-</div>
-
-<!-- 1.1.4 ИНВЕСТИРОВАНИЕ -->
-<div class="sub-branch">1.1.4. Проинвестировать в 30 стартапов (1г: 8, 2г: 10, 3г: 12)</div>
-
-<div class="process-card" id="p14">
-  <div class="process-header">
-    <span class="priority-badge p3">П3</span>
-    <span class="process-name">Оформление инвестиционных сделок</span>
-    <span class="badge badge-new">новый</span>
-  </div>
-  <div class="swimlane">
-    <div class="swim-row"><div class="swim-label trigger">📅 Триггер</div><div class="swim-content">Положительное заключение DD + решение инвестировать</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Подготовка шаблона инвестиционного договора (на основе шаблонов) → заполнение данных стартапа</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label human">👤 CEO</div><div class="swim-content">Согласование условий со стартапом → переговоры</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Финализация договора → отправка на подписание (DocuSign) → контроль подписания и оплаты</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Регистрация в портфеле (SQLite) → уведомление команде → запуск менторской программы</div></div>
-  </div>
-  <div class="process-footer">
-    <span>📍 Стратегия: 1.1.4</span>
-    <span>👤 Владелец: CEO</span>
-    <span>🔁 Частота: ~10/год</span>
-    <span>🏁 Результат: стартап в портфеле</span>
-  </div>
-</div>
-
-<!-- 1.1.5 МЕНТОРСТВО -->
-<div class="sub-branch">1.1.5. Менторство и мониторинг 30 стартапов (1г: 8, 2г: 10, 3г: 12)</div>
-
-<div class="process-card" id="p15">
-  <div class="process-header">
-    <span class="priority-badge p2">П2</span>
-    <span class="process-name">Работа с портфельными стартапами (встречи + апдейты + маркетинг)</span>
-    <span class="badge badge-merged">объединённый</span>
-  </div>
-  <div class="swimlane">
-    <div class="swim-row"><div class="swim-label trigger">📅 Триггер</div><div class="swim-content">Cron по индивидуальному расписанию каждого стартапа (месяц/квартал/год) — автоматическая инициация</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">По календарю: рассылка стартапу — напоминание + слоты Calendly / запрос апдейта</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label external">🏢 Стартап</div><div class="swim-content">Вариант A: встреча (Calendly) | Вариант B: письменный апдейт</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Встреча → Whisper-транскрибация | Апдейт → структурирование. Всё → досье в SQLite</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Анализ динамики (после каждого контакта): выявление проблем и достижений</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Проблемы → сигнал команде для принятия решения | Достижения → передача в маркетинг</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label human">👤 Associate</div><div class="swim-content">Принятие решений по проблемам стартапа</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Генерация маркетинговых материалов по достижениям → публикация (Buffer API)</div></div>
-  </div>
-  <div class="note">⚠️ Объединяет бывшие процессы #15 и #25. Инициация автоматическая, не человеком.</div>
-  <div class="process-footer">
-    <span>📍 Стратегия: 1.1.5</span>
-    <span>👤 Владелец: Associate</span>
-    <span>🔁 Частота: по расписанию</span>
-    <span>🏁 Результат: актуальное досье + контент</span>
-  </div>
-</div>
-
-<!-- 1.1.6 ЭКЗИТЫ -->
-<div class="sub-branch">1.1.6. Продать долю с прибылью (1г: $200K, 2г: $400K, 3г: $600K)</div>
-
-<div class="process-card" id="p16">
-  <div class="process-header">
-    <span class="priority-badge p3">П3</span>
-    <span class="process-name">Подготовка и реализация экзитов</span>
-    <span class="badge badge-new">новый</span>
-  </div>
-  <div class="swimlane">
-    <div class="swim-row"><div class="swim-label trigger">📅 Триггер</div><div class="swim-content">Cron ежеквартально (мониторинг возможностей) + по событию (предложение о покупке)</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Анализ портфеля: готовность стартапов к экзиту (рост, раунды, M&A активность в отрасли)</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Web search: выявление потенциальных покупателей (фонды следующих раундов, стратегические инвесторы, корпорации)</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Подготовка предложения: оценка доли, инвест-мемо, презентация → передача CEO</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label human">👤 CEO</div><div class="swim-content">Переговоры с покупателями → согласование условий</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Оформление сделки (документооборот, DocuSign) → контроль оплаты → фиксация результата</div></div>
-  </div>
-  <div class="process-footer">
-    <span>📍 Стратегия: 1.1.6</span>
-    <span>👤 Владелец: CEO</span>
-    <span>🔁 Частота: ежеквартально</span>
-    <span>🏁 Результат: реализованный экзит</span>
-  </div>
-</div>
-
-<!-- 1.2 МЕНТОРСТВО КАК УСЛУГА -->
-<div class="sub-branch">1.2. Получить прибыль от менторства — $25 000 (1г: $5K, 2г: $8K, 3г: $12K)</div>
-
-<div class="process-card" id="p17">
-  <div class="process-header">
-    <span class="priority-badge p3">П3</span>
-    <span class="process-name">Менторская программа как услуга</span>
-    <span class="badge badge-new">новый</span>
-  </div>
-  <div class="swimlane">
-    <div class="swim-row"><div class="swim-label trigger">📅 Триггер</div><div class="swim-content">Cron ежеквартально (набор) + входящие заявки</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Разработка/обновление учебной программы → подготовка материалов (видео, текст) → размещение на сайте</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Привлечение лидов: через те же каналы (ивенты, SMM, таргет, SEO, акселераторы, СМИ)</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Скрининг заявок → отбор 100 стартапов/год → вынесение на ИК</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label human">👤 CEO</div><div class="swim-content">Проведение менторской программы → получение доли в стартапе</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Сбор обратной связи → анализ эффективности → корректировка программы</div></div>
-  </div>
-  <div class="process-footer">
-    <span>📍 Стратегия: 1.2</span>
-    <span>👤 Владелец: CEO</span>
-    <span>🔁 Частота: ежеквартально</span>
-    <span>🏁 Результат: менторство + доля</span>
-  </div>
-</div>
-
-</div><!-- end branch 1 -->
-
-<div class="section-divider"></div>
-
-<!-- ============================================================= -->
-<!-- BRANCH 2: ПРИБЫЛЬ ОТ ИНВЕСТОРОВ -->
-<!-- ============================================================= -->
-
-<div class="strategy-branch">
-<div class="branch-header">
-  2. Получить прибыль от инвесторов
-  <small>Синдикаты $75K + управление капиталом</small>
-</div>
-
-<div class="sub-branch">2.1. Синдикаты — $75 000 (по $25K/год)</div>
-
-<!-- P18: Клуб инвесторов -->
-<div class="process-card" id="p18">
-  <div class="process-header">
-    <span class="priority-badge p2">П2</span>
-    <span class="process-name">Формирование и развитие клуба инвесторов</span>
-    <span class="badge badge-new">новый</span>
-  </div>
-  <div class="swimlane">
-    <div class="swim-row"><div class="swim-label trigger">📅 Триггер</div><div class="swim-content">Cron ежеквартально + входящие заявки</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Создание/обновление учебной программы для инвесторов → материалы на сайт</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Привлечение инвесторов: ивенты, СМИ, SMM, таргет, SEO, партнёрства</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Скрининг кандидатов → проверка (web search, реестры) → рекомендации</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label human">👤 Ануар</div><div class="swim-content">Переговоры → вступление в клуб</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Онбординг: рассылка материалов, добавление в чат, обновление базы инвесторов</div></div>
-  </div>
-  <div class="process-footer">
-    <span>📍 Стратегия: 2.1.1</span>
-    <span>👤 Владелец: Ануар</span>
-    <span>🔁 Частота: ежеквартально</span>
-    <span>🏁 Результат: новый член клуба</span>
-  </div>
-</div>
-
-<!-- P19: Синдикация -->
-<div class="process-card" id="p19">
-  <div class="process-header">
-    <span class="priority-badge p2">П2</span>
-    <span class="process-name">Синдикация — работа с инвесторами клуба</span>
-    <span class="badge badge-existing">существующий</span>
-  </div>
-  <div class="swimlane">
-    <div class="swim-row"><div class="swim-label trigger">📅 Триггер</div><div class="swim-content">Новый стартап с комитментом (из процесса инвестирования)</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Подготовка аналитических материалов и визуала по стартапу для инвесторов</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Публикация в чате инвесторов + организация звонка (Google Calendar) + презентация</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label external">🏢 Инвесторы</div><div class="swim-content">Принятие решения (дедлайн +2 нед.)</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Напоминания → сбор решений → при согласии: координация с юристом (DocuSign)</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label human">👤 Ануар</div><div class="swim-content">Контроль подписания договоров и оплаты</div></div>
-  </div>
-  <div class="process-footer">
-    <span>📍 Стратегия: 2.1.2–2.1.3</span>
-    <span>👤 Владелец: Ануар</span>
-    <span>🔁 Частота: по событию</span>
-    <span>🏁 Результат: синдикатная сделка</span>
-  </div>
-</div>
-
-<!-- P20: Отчётность инвесторам -->
-<div class="process-card" id="p20">
-  <div class="process-header">
-    <span class="priority-badge p2">П2</span>
-    <span class="process-name">Отчётность для инвесторов клуба</span>
-    <span class="badge badge-existing">существующий</span>
-  </div>
-  <div class="swimlane">
-    <div class="swim-row"><div class="swim-label trigger">📅 Триггер</div><div class="swim-content">Cron квартал/год → email инвесторам</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Сбор отчётов: через associate (звонки) + browser automation (startup.inc, логин Марата Толыбай)</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Переработка: Word для годовых, текст для квартальных + поиск предыдущих писем</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label human">👤 Ануар</div><div class="swim-content">Одобрение рассылки</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Отправка BCC-рассылки инвесторам клуба</div></div>
-  </div>
-  <div class="process-footer">
-    <span>📍 Стратегия: 2.1</span>
-    <span>👤 Владелец: Ануар</span>
-    <span>🔁 Частота: квартал/год</span>
-    <span>🏁 Результат: отчёт доставлен</span>
-  </div>
-</div>
-
-<div class="sub-branch">2.2. Управление капиталом (VC фонд, корпоративный фонд, семейный офис)</div>
-
-<!-- P21: Привлечение LP -->
-<div class="process-card" id="p21">
-  <div class="process-header">
-    <span class="priority-badge p3">П3</span>
-    <span class="process-name">Привлечение LP в венчурный фонд</span>
-    <span class="badge badge-new">новый</span>
-  </div>
-  <div class="swimlane">
-    <div class="swim-row"><div class="swim-label trigger">📅 Триггер</div><div class="swim-content">Решение о создании фонда / начало фандрейзинга</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Web search по 5 категориям LP: институционалы КЗ, международные институционалы, корпорации, семейные офисы, HNWI → база в SQLite</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Подготовка инвестиционных материалов: pitch deck фонда, track record, стратегия → персонализация под каждую категорию LP</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label human">👤 CEO</div><div class="swim-content">Одобрение материалов → проведение переговоров с LP</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Трекинг переговоров (CRM) → напоминания → подготовка договоров → контроль оплаты</div></div>
-  </div>
-  <div class="process-footer">
-    <span>📍 Стратегия: 2.2.1.2</span>
-    <span>👤 Владелец: CEO</span>
-    <span>🔁 Частота: по фазе фонда</span>
-    <span>🏁 Результат: LP в фонде</span>
-  </div>
-</div>
-
-<!-- P22: Управление фондами -->
-<div class="process-card" id="p22">
-  <div class="process-header">
-    <span class="priority-badge p3">П3</span>
-    <span class="process-name">Управление венчурными фондами (собственный + корпоративный)</span>
-    <span class="badge badge-new">новый</span>
-  </div>
-  <div class="swimlane">
-    <div class="swim-row"><div class="swim-label trigger">📅 Триггер</div><div class="swim-content">Cron ежеквартально (отчётность) + по событию (сделка, экзит)</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Мониторинг портфеля фонда: NAV, доходность, IRR → квартальный отчёт для LP</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Инвестирование: используются процессы воронки (скрининг → ИК → DD → сделка)</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Экзиты: используется процесс «Подготовка экзитов»</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Распределение прибыли: расчёт waterfall → формирование документов → контроль выплат</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label human">👤 CEO</div><div class="swim-content">Утверждение распределений и ключевых решений по фонду</div></div>
-  </div>
-  <div class="process-footer">
-    <span>📍 Стратегия: 2.2.1–2.2.3</span>
-    <span>👤 Владелец: CEO</span>
-    <span>🔁 Частота: ежеквартально</span>
-    <span>🏁 Результат: управляемый фонд</span>
-  </div>
-</div>
-
-<!-- P23: B2B партнёрства -->
-<div class="process-card" id="p23">
-  <div class="process-header">
-    <span class="priority-badge p3">П3</span>
-    <span class="process-name">Работа с корпорациями (B2B-партнёрства)</span>
-    <span class="badge badge-existing">существующий</span>
-  </div>
-  <div class="swimlane">
-    <div class="swim-row"><div class="swim-label trigger">📅 Триггер</div><div class="swim-content">Постоянно + по запросу корпорации</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label human">👤 Рысты</div><div class="swim-content">Сбор критериев корпорации: отрасль, стадия, технологии, бюджет</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Поиск и скрининг стартапов (база + web search) → шортлист с оценками</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label human">👤 Рысты</div><div class="swim-content">Ручной отбор из шортлиста</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Ведение таблицы статусов (SQLite: partnerships) → отчёты по прогрессу</div></div>
-  </div>
-  <div class="note">⚠️ Требует детализации от Рысты</div>
-  <div class="process-footer">
-    <span>📍 Стратегия: 2.2.2</span>
-    <span>👤 Владелец: Рысты</span>
-    <span>🔁 Частота: постоянно</span>
-    <span>🏁 Результат: сделки стартапов с корпорациями</span>
-  </div>
-</div>
-
-<!-- P24: Отборочные мероприятия -->
-<div class="process-card" id="p24">
-  <div class="process-header">
-    <span class="priority-badge p3">П3</span>
-    <span class="process-name">Отборочные мероприятия (питчинги с корп. партнёрами)</span>
-    <span class="badge badge-existing">существующий</span>
-  </div>
-  <div class="swimlane">
-    <div class="swim-row"><div class="swim-label trigger">📅 Триггер</div><div class="swim-content">По соглашению с корпоративным партнёром</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Создание концепции мероприятия + Google Forms для заявок → рассылка</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Многоэтапный скрининг заявок → рекомендации для ручного отбора</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label human">👤 Рысты</div><div class="swim-content">Звонки с финалистами → согласование с партнёром</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Координация: email-рассылка участникам, напоминания, логистика</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">День мероприятия: агрегация голосов жюри → формирование результатов</div></div>
-  </div>
-  <div class="process-footer">
-    <span>📍 Стратегия: 2.2.2</span>
-    <span>👤 Владелец: Рысты</span>
-    <span>🔁 Частота: по соглашению</span>
-    <span>🏁 Результат: проведённый отбор</span>
-  </div>
-</div>
-
-</div><!-- end branch 2 -->
-
-<div class="section-divider"></div>
-
-<!-- ============================================================= -->
-<!-- BRANCH 3: ЖИЗНЕДЕЯТЕЛЬНОСТЬ -->
-<!-- ============================================================= -->
-
-<div class="strategy-branch">
-<div class="branch-header">
-  3. Обеспечить бесперебойную жизнедеятельность компании
-  <small>HR, право, финансы, бухгалтерия, техника, организация</small>
-</div>
-
-<div class="sub-branch">3.1. Кадровое обеспечение</div>
-
-<div class="process-card" id="p25">
-  <div class="process-header">
-    <span class="priority-badge p3">П3</span>
-    <span class="process-name">HR: подбор и онбординг сотрудников</span>
-    <span class="badge badge-new">новый</span>
-  </div>
-  <div class="swimlane">
-    <div class="swim-row"><div class="swim-label trigger">📅 Триггер</div><div class="swim-content">Решение о найме (вакансия открыта)</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Генерация описания вакансии → публикация на площадках (hh.kz, LinkedIn) → мониторинг откликов</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Скрининг резюме → ранжирование кандидатов → шортлист с обоснованием</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label human">👤 CEO</div><div class="swim-content">Собеседования с финалистами → выбор → оффер</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Онбординг: рассылка материалов, доступы, знакомство с командой, план на первый месяц</div></div>
-  </div>
-  <div class="process-footer">
-    <span>📍 Стратегия: 3.1.1</span>
-    <span>👤 Владелец: CEO</span>
-    <span>🔁 Частота: по событию</span>
-    <span>🏁 Результат: закрытая вакансия ≤1 мес.</span>
-  </div>
-</div>
-
-<div class="process-card" id="p26">
-  <div class="process-header">
-    <span class="priority-badge p3">П3</span>
-    <span class="process-name">HR: мониторинг удовлетворённости и развитие</span>
-    <span class="badge badge-new">новый</span>
-  </div>
-  <div class="swimlane">
-    <div class="swim-row"><div class="swim-label trigger">📅 Триггер</div><div class="swim-content">Cron ежеквартально → DM CEO</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Анонимный опрос сотрудников (Google Forms) → анализ ответов → выявление проблем</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Отчёт с рекомендациями: что улучшить, риски ухода, предложения по развитию → DM CEO</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label human">👤 CEO</div><div class="swim-content">Принятие мер по результатам</div></div>
-  </div>
-  <div class="process-footer">
-    <span>📍 Стратегия: 3.1.2</span>
-    <span>👤 Владелец: CEO</span>
-    <span>🔁 Частота: ежеквартально</span>
-    <span>🏁 Результат: текучесть ≤10%/год</span>
-  </div>
-</div>
-
-<div class="sub-branch">3.2. Правовое обеспечение</div>
-
-<div class="process-card" id="p27">
-  <div class="process-header">
-    <span class="priority-badge p1">П1</span>
-    <span class="process-name">Правовой мониторинг (Adilet.kz)</span>
-    <span class="badge badge-existing">существующий</span>
-  </div>
-  <div class="swimlane">
-    <div class="swim-row"><div class="swim-label trigger">📅 Триггер</div><div class="swim-content">Cron еженедельно → #ai-legal</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Browser → adilet.zan.kz → новые НПА за неделю → анализ влияния на компанию</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Дайджест с рекомендациями → #ai-legal @CEO</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label human">👤 CEO</div><div class="swim-content">Принятие решений по действиям</div></div>
-  </div>
-  <div class="note">⚠️ Исправлено: юриста в штате не будет. Агент = юрист. Решения принимает CEO.</div>
-  <div class="process-footer">
-    <span>📍 Стратегия: 3.2</span>
-    <span>👤 Владелец: CEO</span>
-    <span>🔁 Частота: еженедельно</span>
-    <span>🏁 Результат: правовой дайджест</span>
-  </div>
-</div>
-
-<div class="process-card" id="p28">
-  <div class="process-header">
-    <span class="priority-badge p2">П2</span>
-    <span class="process-name">Юридическое сопровождение сделок</span>
-    <span class="badge badge-new">новый</span>
-  </div>
-  <div class="swimlane">
-    <div class="swim-row"><div class="swim-label trigger">📅 Триггер</div><div class="swim-content">Запрос на подготовку/проверку договора</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Подготовка договора по шаблону → проверка на риски → рекомендации</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label human">👤 CEO</div><div class="swim-content">Ревью → согласование с контрагентом</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Финализация → DocuSign → контроль подписания → архивирование</div></div>
-  </div>
-  <div class="process-footer">
-    <span>📍 Стратегия: 3.2</span>
-    <span>👤 Владелец: CEO</span>
-    <span>🔁 Частота: по событию</span>
-    <span>🏁 Результат: подписанный договор</span>
-  </div>
-</div>
-
-<div class="sub-branch">3.3. Финансовое планирование</div>
-
-<div class="process-card" id="p29">
-  <div class="process-header">
-    <span class="priority-badge p1">П1</span>
-    <span class="process-name">Стратегическое планирование компании (включает финансовый контроль)</span>
-    <span class="badge badge-merged">объединённый</span>
-  </div>
-  <div class="swimlane">
-    <div class="swim-row"><div class="swim-label trigger">📅 Триггер</div><div class="swim-content">Cron (приближение окончания стратегии, напр. 1 ноября) ИЛИ принудительно от учредителя</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Анализ исполнения стратегии: финансы (openpyxl), все KPI (лиды, ИК, DD, инвестиции, маркетинг) → отчёт с рекомендациями</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label human">👤 Собственник</div><div class="swim-content">Изучение отчёта → даёт вводные (голосом/текстом): направления, приоритеты</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Черновик новой стратегии (на скелете предыдущей) → включая финансовый план</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label human">👤 Собственник</div><div class="swim-content">Первичное согласование</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Рассылка всем сотрудникам на ознакомление → сбор обратной связи → передача собственнику</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label human">👤 Собственник</div><div class="swim-content">Утверждение окончательной версии</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Публикация в облаке → постоянное хранение, доступ для всех сотрудников</div></div>
-  </div>
-  <div class="note">⚠️ Поглощает бывший процесс «Бюджетный контролёр». Финансовый анализ = часть общего контроля исполнения стратегии.</div>
-  <div class="process-footer">
-    <span>📍 Стратегия: 3.3 + сквозной</span>
-    <span>👤 Владелец: Собственник</span>
-    <span>🔁 Частота: ежегодно + по событию</span>
-    <span>🏁 Результат: утверждённая стратегия</span>
-  </div>
-</div>
-
-<div class="process-card" id="p30">
-  <div class="process-header">
-    <span class="priority-badge p2">П2</span>
-    <span class="process-name">Маркетинговая стратегия</span>
-    <span class="badge badge-existing">существующий</span>
-  </div>
-  <div class="swimlane">
-    <div class="swim-row"><div class="swim-label trigger">📅 Триггер</div><div class="swim-content">Cron ежеквартально (анализ) + ежегодно (новая стратегия)</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Анализ маркетинговых KPI: лиды, охваты, конверсии, ROI каналов → заключение</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label human">👤 Маркетолог</div><div class="swim-content">Комментарии и корректировки → вводные для новой стратегии</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Подготовка новой маркетинговой стратегии</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label human">👤 Маркетолог</div><div class="swim-content">Согласование</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label human">👤 Собственник</div><div class="swim-content">Окончательное утверждение → сохранение в облаке</div></div>
-  </div>
-  <div class="process-footer">
-    <span>📍 Стратегия: 3.3 (маркетинг)</span>
-    <span>👤 Владелец: Маркетолог → Собственник</span>
-    <span>🔁 Частота: ежеквартально/ежегодно</span>
-    <span>🏁 Результат: утверждённая стратегия</span>
-  </div>
-</div>
-
-<div class="sub-branch">3.4. Бухгалтерский учёт</div>
-
-<div class="process-card" id="p31">
-  <div class="process-header">
-    <span class="priority-badge p4">П4</span>
-    <span class="process-name">Контроль бухгалтерского и налогового учёта</span>
-    <span class="badge badge-new">новый</span>
-  </div>
-  <div class="swimlane">
-    <div class="swim-row"><div class="swim-label trigger">📅 Триггер</div><div class="swim-content">Cron ежемесячно + перед налоговыми дедлайнами</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label external">🏢 Бухгалтер (аутсорс)</div><div class="swim-content">Ведение учёта, проведение операций</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Запрос отчётов у бухгалтера → проверка на аномалии → напоминания о дедлайнах</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Ежемесячный отчёт CEO: статус учёта, приближающиеся дедлайны, выявленные проблемы</div></div>
-  </div>
-  <div class="process-footer">
-    <span>📍 Стратегия: 3.4</span>
-    <span>👤 Владелец: CEO</span>
-    <span>🔁 Частота: ежемесячно</span>
-    <span>🏁 Результат: учёт без претензий</span>
-  </div>
-</div>
-
-<div class="sub-branch">3.5. Техническое функционирование</div>
-
-<div class="process-card" id="p32">
-  <div class="process-header">
-    <span class="priority-badge p2">П2</span>
-    <span class="process-name">Техническое обеспечение сайта и инфраструктуры</span>
-    <span class="badge badge-new">новый</span>
-  </div>
-  <div class="swimlane">
-    <div class="swim-row"><div class="swim-label trigger">📅 Триггер</div><div class="swim-content">Cron ежедневно (мониторинг) + ежемесячно (аудит) + алерты</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Ежедневно: проверка доступности сайта (uptime) + SSL-сертификаты + домены (срок)</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Ежемесячно: бэкап кода (Git), сканирование безопасности, UX-аудит</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">При сбое: алерт Дмитрию + автоматическая диагностика + рекомендации по исправлению</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label human">👤 Дмитрий</div><div class="swim-content">Исправление технических проблем</div></div>
-  </div>
-  <div class="process-footer">
-    <span>📍 Стратегия: 3.5</span>
-    <span>👤 Владелец: Дмитрий</span>
-    <span>🔁 Частота: ежедневно/ежемесячно</span>
-    <span>🏁 Результат: аптайм 99.9%</span>
-  </div>
-</div>
-
-<div class="sub-branch">3.6. Организационные вопросы</div>
-
-<div class="process-card" id="p33">
-  <div class="process-header">
-    <span class="priority-badge p4">П4</span>
-    <span class="process-name">Контроль корпоративных лицензий и регистраций</span>
-    <span class="badge badge-new">новый</span>
-  </div>
-  <div class="swimlane">
-    <div class="swim-row"><div class="swim-label trigger">📅 Триггер</div><div class="swim-content">Cron ежемесячно → проверка дедлайнов</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Проверка: лицензии, регистрации, разрешения → срок действия → напоминания за 2 мес. до истечения</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">При приближении дедлайна: подготовка документов на продление → DM CEO</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label human">👤 CEO</div><div class="swim-content">Подписание и подача</div></div>
-  </div>
-  <div class="process-footer">
-    <span>📍 Стратегия: 3.6.1</span>
-    <span>👤 Владелец: CEO</span>
-    <span>🔁 Частота: ежемесячно</span>
-    <span>🏁 Результат: всё в силе</span>
-  </div>
-</div>
-
-</div><!-- end branch 3 -->
-
-<div class="section-divider"></div>
-
-<!-- ============================================================= -->
-<!-- СКВОЗНЫЕ ПРОЦЕССЫ -->
-<!-- ============================================================= -->
-
-<div class="strategy-branch">
-<div class="branch-header">
-  Сквозные процессы
-  <small>Не привязаны к одной ветви стратегии, поддерживают все направления</small>
-</div>
-
-<div class="process-card" id="p34">
-  <div class="process-header">
-    <span class="priority-badge p1">П1</span>
-    <span class="process-name">Мониторинг конкурентов</span>
-    <span class="badge badge-existing">существующий</span>
-  </div>
-  <div class="swimlane">
-    <div class="swim-row"><div class="swim-label trigger">📅 Триггер</div><div class="swim-content">Cron ежедневно (ночью) → #ai-competitors (утром)</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Разовая настройка: сайты/соцсети конкурентов → SQLite</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Ежедневный скан: browser + Google Search → выявление событий → дедупликация</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Утренний дайджест → #ai-competitors</div></div>
-  </div>
-  <div class="process-footer">
-    <span>📍 Стратегия: сквозной</span>
-    <span>👤 Владелец: общекомандный</span>
-    <span>🔁 Частота: ежедневно</span>
-    <span>🏁 Результат: конкурентная разведка</span>
-  </div>
-</div>
-
-<div class="process-card" id="p35">
-  <div class="process-header">
-    <span class="priority-badge p1">П1</span>
-    <span class="process-name">Мониторинг отклонённых стартапов</span>
-    <span class="badge badge-existing">существующий</span>
-  </div>
-  <div class="swimlane">
-    <div class="swim-row"><div class="swim-label trigger">📅 Триггер</div><div class="swim-content">Cron еженедельно → #ai-portfolio</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Bitrix24 API (rejected) → web search по каждому → анализ успешности → расчёт упущенной выгоды</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Анализ причин отказа → предложения по улучшению критериев → отчёт в #ai-portfolio</div></div>
-  </div>
-  <div class="process-footer">
-    <span>📍 Стратегия: сквозной</span>
-    <span>👤 Владелец: общекомандный</span>
-    <span>🔁 Частота: еженедельно</span>
-    <span>🏁 Результат: улучшение отбора</span>
-  </div>
-</div>
-
-<div class="process-card" id="p36">
-  <div class="process-header">
-    <span class="priority-badge p1">П1</span>
-    <span class="process-name">Сбор отчётных данных по воронке</span>
-    <span class="badge badge-existing">существующий</span>
-  </div>
-  <div class="swimlane">
-    <div class="swim-row"><div class="swim-label trigger">📅 Триггер</div><div class="swim-content">Cron еженедельно → #ai-marketing</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Bitrix24 API → фильтрация за неделю → извлечение данных → формирование отчёта с динамикой</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Публикация в #ai-marketing или DM</div></div>
-  </div>
-  <div class="process-footer">
-    <span>📍 Стратегия: сквозной</span>
-    <span>👤 Владелец: Маркетолог</span>
-    <span>🔁 Частота: еженедельно</span>
-    <span>🏁 Результат: отчёт по воронке</span>
-  </div>
-</div>
-
-<div class="process-card" id="p37">
-  <div class="process-header">
-    <span class="priority-badge p3">П3</span>
-    <span class="process-name">Видеоконтент pipeline (локализация)</span>
-    <span class="badge badge-existing">существующий</span>
-  </div>
-  <div class="swimlane">
-    <div class="swim-row"><div class="swim-label trigger">📅 Триггер</div><div class="swim-content">Cron еженедельно → YouTube, IG, Facebook, LinkedIn</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Поиск зарубежного видео (web search) → запрос разрешения автора (без разрешения = нельзя!)</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Транскрибация (Whisper) → перевод → HeyGen API → рекламные вставки</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Публикация: YouTube API + шортсы (Opus Clip/FFmpeg) → Buffer API</div></div>
-  </div>
-  <div class="process-footer">
-    <span>📍 Стратегия: сквозной (контент)</span>
-    <span>👤 Владелец: Маркетолог</span>
-    <span>🔁 Частота: еженедельно</span>
-    <span>🏁 Результат: локализованный контент</span>
-  </div>
-</div>
-
-<div class="process-card" id="p38">
-  <div class="process-header">
-    <span class="priority-badge p3">П3</span>
-    <span class="process-name">Создание презентаций</span>
-    <span class="badge badge-existing">существующий</span>
-  </div>
-  <div class="swimlane">
-    <div class="swim-row"><div class="swim-label trigger">📅 Триггер</div><div class="swim-content">По запросу любого сотрудника</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label human">👤 Сотрудник</div><div class="swim-content">Наговаривает: аудитория, тема, ключевые тезисы</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Создание каркаса (из базы существующих слайдов) → одобрение → создание визуала (PPTX) → итерации</div></div>
-  </div>
-  <div class="note">⚠️ Исправлено: не только маркетолог, а любой сотрудник компании.</div>
-  <div class="process-footer">
-    <span>📍 Стратегия: сквозной</span>
-    <span>👤 Владелец: любой сотрудник</span>
-    <span>🔁 Частота: по запросу</span>
-    <span>🏁 Результат: готовая презентация</span>
-  </div>
-</div>
-
-<div class="process-card" id="p39">
-  <div class="process-header">
-    <span class="priority-badge p2">П2</span>
-    <span class="process-name">Обновление базы VC-фондов на сайте</span>
-    <span class="badge badge-existing">существующий</span>
-  </div>
-  <div class="swimlane">
-    <div class="swim-row"><div class="swim-label trigger">📅 Триггер</div><div class="swim-content">Cron ежемесячно → сайт Activat VC</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Browser → проверка каждого фонда (активен ли) + поиск новых → отчёт Исмаилу → одобрение → обновление сайта</div></div>
-  </div>
-  <div class="process-footer">
-    <span>📍 Стратегия: сквозной</span>
-    <span>👤 Владелец: Исмаил</span>
-    <span>🔁 Частота: ежемесячно</span>
-    <span>🏁 Результат: актуальная база</span>
-  </div>
-</div>
-
-<div class="process-card" id="p40">
-  <div class="process-header">
-    <span class="priority-badge p2">П2</span>
-    <span class="process-name">Обратная связь от стартаперов</span>
-    <span class="badge badge-merged">объединённый</span>
-  </div>
-  <div class="swimlane">
-    <div class="swim-row"><div class="swim-label trigger">📅 Триггер</div><div class="swim-content">Сигнал от сотрудника (позитивное событие / ключевая встреча)</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Генерация запроса фидбэка → отправка стартапу → парсинг ответа (Gmail MCP)</div></div>
-    <div class="arrow">↓</div>
-    <div class="swim-row"><div class="swim-label agent">🤖 Агент</div><div class="swim-content">Структурирование → фиксация в CRM → при позитиве: генерация репоста → Buffer API</div></div>
-  </div>
-  <div class="process-footer">
-    <span>📍 Стратегия: сквозной</span>
-    <span>👤 Владелец: Марат / Associate</span>
-    <span>🔁 Частота: по событию</span>
-    <span>🏁 Результат: фидбэк + контент</span>
-  </div>
-</div>
-
-</div><!-- end сквозные -->
-
-<!-- FOOTER -->
-<div style="text-align:center; padding:2rem; color:#9ca3af; font-size:0.8rem;">
-  <p>Activat VC — Swimlane-карта бизнес-процессов v2.0</p>
-  <p>Источники: карта 28 процессов, аудиокомментарии учредителя, стратегия развития</p>
-  <p>Сгенерировано: 14 мая 2026</p>
-</div>
-
-</div><!-- container -->
+<script>
+// === DATA ===
+
+const BRANCHES = {
+  B1: { title: "Ветка 1. Прибыль от стартапов — $1 225 000", subtitle: "1г: $205K · 2г: $408K · 3г: $612K" },
+  B2: { title: "Ветка 2. Прибыль от инвесторов", subtitle: "Синдикаты $75K + управление капиталом" },
+  B3: { title: "Ветка 3. Жизнедеятельность компании", subtitle: "HR, право, финансы, бухгалтерия, техника, организация" },
+  BX: { title: "Сквозные процессы", subtitle: "Не привязаны к одной ветви, поддерживают все направления" }
+};
+
+const processes = [
+  // ==================== BRANCH 1 ====================
+  {
+    id: 1, branch: "B1", subBranch: "1.1.1. Привлечь 3 000 лидов от стартапов",
+    title: "Привлечение лидов через скаутов",
+    priority: 2, badge: "new",
+    owner: "CEO", trigger: "Cron ежеквартально + постоянный мониторинг",
+    output: "Лиды в воронке (Bitrix24)", strategy: "1.1.1.1",
+    participants: ["Агент", "CEO", "Скауты", "Bitrix24", "Brevo"],
+    phases: [{
+      steps: [
+        { actor: "Агент", action: "Поиск кандидатов в скауты", details: "Web search: венчурные аналитики, бизнес-консультанты, акселераторы → шортлист с профилями", auto: "full" },
+        { actor: "CEO", action: "Одобрение шортлиста", details: "Рассмотрение кандидатов → утверждение для контакта", auto: "manual", decision: true },
+        { actor: "Агент", action: "Рассылка приглашений", details: "Brevo: персонализированные письма → трекинг ответов", auto: "full" },
+        { actor: "CEO", action: "Переговоры со скаутами", details: "Заключение договоров о сотрудничестве", auto: "manual" },
+        { actor: "Агент", action: "Учебные материалы для скаутов", details: "Подготовка → размещение на сайте (Playwright)", auto: "full" },
+        { actor: "Скауты", action: "Передача лидов", details: "Скауты присылают стартапы → агент регистрирует в Bitrix24 с тегом «от скаута»", auto: "manual" },
+        { actor: "Агент", action: "Первичный скрининг", details: "Маршрутизация в воронку → процесс «Скрининг заявок»", auto: "full" }
+      ]
+    }],
+    note: null
+  },
+  {
+    id: 2, branch: "B1", subBranch: "1.1.1. Привлечь 3 000 лидов от стартапов",
+    title: "Организация собственных мероприятий",
+    priority: 2, badge: "existing",
+    owner: "Исмаил → Associate", trigger: "По запросу (multi-step)",
+    output: "Проведённое мероприятие + лиды", strategy: "1.1.1.2",
+    participants: ["Агент", "Исмаил", "Associate", "Стартапы", "Инвесторы", "Спонсор", "Calendly", "Buffer", "Brevo"],
+    phases: [
+      { name: "Фаза 1. Концепция и продакшен", steps: [
+        { actor: "Исмаил", action: "Инициация мероприятия", details: "Тема, формат, дата, целевая аудитория", auto: "manual" },
+        { actor: "Агент", action: "Формирование концепции", details: "Поиск площадок и партнёров → подготовка КП спонсорам", auto: "full" }
+      ]},
+      { name: "Фаза 2. Рассылка и регистрация", steps: [
+        { actor: "Агент", action: "Параллельные рассылки", details: "Стартапам + инвесторам через Brevo → трекинг ответов", auto: "full" },
+        { actor: "Стартапы", action: "Регистрация участников", details: "Заполнение форм, ответы возвращаются к агенту", auto: "manual" },
+        { actor: "Инвесторы", action: "Подтверждение участия", details: "Ответы фиксируются в базе", auto: "manual" }
+      ]},
+      { name: "Фаза 3. Подготовка и проведение", steps: [
+        { actor: "Associate", action: "Подготовка участников", details: "Помощь с питч-деками, анализ качества презентаций", auto: "manual" },
+        { actor: "Агент", action: "Координация дня X", details: "Calendly, напоминания, рассылки → день мероприятия", auto: "full" }
+      ]},
+      { name: "Фаза 4. Освещение", steps: [
+        { actor: "Агент", action: "Пост-мероприятие", details: "Отчётный пост, фото/видео обработка → публикация (Buffer API)", auto: "full" }
+      ]}
+    ],
+    note: "Исправлено по аудио: рассылка стартапам и инвесторам — параллельные процессы. Подготовку участников ведёт associate, не Исмаил."
+  },
+  {
+    id: 3, branch: "B1", subBranch: "1.1.1. Привлечь 3 000 лидов от стартапов",
+    title: "Участие в чужих мероприятиях",
+    priority: 2, badge: "existing",
+    owner: "Исмаил", trigger: "Cron еженедельно + интерактивный",
+    output: "#ai-events + контент в соцсетях", strategy: "1.1.1.3",
+    participants: ["Агент", "Исмаил", "Организатор", "Buffer"],
+    phases: [
+      { name: "Фаза 1. Поиск и одобрение", steps: [
+        { actor: "Агент", action: "Парсинг мероприятий", details: "Web search: венчурные события в ЦА и Кавказе → сбор информации → оценка целесообразности", auto: "full" },
+        { actor: "Исмаил", action: "Одобрение участия", details: "«Одобряю EVT-N» → агент обновляет статус", auto: "manual", decision: true }
+      ]},
+      { name: "Фаза 2. Коммуникация с организатором", steps: [
+        { actor: "Агент", action: "Запрос организатору", details: "Email с корпоративной почты по шаблону + специфика", auto: "full" },
+        { actor: "Организатор", action: "Ответ", details: "Подтверждение, отказ или уточнения", auto: "manual" },
+        { actor: "Исмаил", action: "Подтверждение запуска", details: "При положительном ответе → запуск подготовки", auto: "manual", decision: true }
+      ]},
+      { name: "Фаза 3. Подготовка материалов", steps: [
+        { actor: "Агент", action: "Подготовка речи и слайдов", details: "Текст на основе темы + PPTX", auto: "full" },
+        { actor: "Исмаил", action: "Проверка материалов", details: "Правки и одобрение перед мероприятием", auto: "manual", decision: true }
+      ]},
+      { name: "Фаза 4. Освещение", steps: [
+        { actor: "Исмаил", action: "Описание заранее", details: "Заблаговременное описание мероприятия агенту для постов", auto: "manual" },
+        { actor: "Исмаил", action: "Материалы с места", details: "Фото, видео, голосовые → агенту в DM", auto: "manual" },
+        { actor: "Агент", action: "Транскрибация и публикация", details: "Whisper → формирование постов → Buffer API", auto: "full" }
+      ]}
+    ],
+    note: "Исправлено: слайды для спикера ≠ материалы для публикации. Для постов агент получает отдельное описание заранее."
+  },
+  {
+    id: 4, branch: "B1", subBranch: "1.1.1. Привлечь 3 000 лидов от стартапов",
+    title: "Участие в акселераторах как спикеры",
+    priority: 3, badge: "existing",
+    owner: "Исмаил", trigger: "Cron ежемесячно",
+    output: "Участие в программах + лиды", strategy: "1.1.1.4",
+    participants: ["Агент", "Исмаил", "Организатор"],
+    phases: [{
+      steps: [
+        { actor: "Агент", action: "Поиск акселераторов", details: "Web search: программы → оценка релевантности → шортлист", auto: "full" },
+        { actor: "Исмаил", action: "Одобрение целевых акселераторов", details: "Утверждение списка для контакта", auto: "manual", decision: true },
+        { actor: "Агент", action: "Письма организаторам", details: "Генерация писем → переговоры → координация участия", auto: "full" },
+        { actor: "Организатор", action: "Согласование участия", details: "Подтверждение даты и формата выступления", auto: "manual" },
+        { actor: "Агент", action: "Подготовка спикера", details: "Материалы → освещение в СМИ и соцсетях", auto: "full" }
+      ]
+    }],
+    note: null
+  },
+  {
+    id: 5, branch: "B1", subBranch: "1.1.1. Привлечь 3 000 лидов от стартапов",
+    title: "PR и работа со СМИ",
+    priority: 2, badge: "new",
+    owner: "Маркетолог", trigger: "Cron ежемесячно + по событию",
+    output: "Публикации в СМИ", strategy: "1.1.1.5",
+    participants: ["Агент", "Маркетолог", "Gmail"],
+    phases: [{
+      steps: [
+        { actor: "Агент", action: "Актуализация базы СМИ", details: "Web search: профильные издания (венчурные, бизнес, стартап-экосистема) → SQLite", auto: "full" },
+        { actor: "Агент", action: "Подготовка материалов", details: "Пресс-релизы, экспертные колонки, комментарии", auto: "full" },
+        { actor: "Маркетолог", action: "Ревью материалов", details: "Одобрение перед рассылкой", auto: "manual", decision: true },
+        { actor: "Агент", action: "Рассылка в редакции", details: "Email через Gmail → трекинг публикаций", auto: "full" },
+        { actor: "Агент", action: "Отчёт о публикациях", details: "Сводка → #ai-marketing", auto: "full" }
+      ]
+    }],
+    note: null
+  },
+  {
+    id: 6, branch: "B1", subBranch: "1.1.1. Привлечь 3 000 лидов от стартапов",
+    title: "Создание контент-плана",
+    priority: 1, badge: "existing",
+    owner: "Маркетолог", trigger: "Cron ежемесячно",
+    output: "Утверждённый контент-план", strategy: "1.1.1.6",
+    participants: ["Агент", "Маркетолог"],
+    phases: [{
+      steps: [
+        { actor: "Агент", action: "Анализ прошлого месяца", details: "Охваты, вовлечённость, конверсия → рекомендации", auto: "full" },
+        { actor: "Агент", action: "Генерация нового плана", details: "Разбивка по неделям, 3 поста/нед., предложения тем", auto: "full" },
+        { actor: "Маркетолог", action: "Утверждение и метаданные", details: "Одобрение + конкретные вводные («пост про стартап X»)", auto: "manual", decision: true }
+      ]
+    }],
+    note: null
+  },
+  {
+    id: 7, branch: "B1", subBranch: "1.1.1. Привлечь 3 000 лидов от стартапов",
+    title: "Создание и публикация постов",
+    priority: 1, badge: "existing",
+    owner: "Маркетолог", trigger: "Cron по контент-плану (3 раза/нед.)",
+    output: "Опубликованный пост", strategy: "1.1.1.6",
+    participants: ["Агент", "Маркетолог", "Buffer"],
+    phases: [{
+      steps: [
+        { actor: "Агент", action: "Проверка контент-плана", details: "Видит, что пост нужен → сам инициирует", auto: "full" },
+        { actor: "Агент", action: "Формирование поста", details: "Заголовок + текст + хештеги", auto: "full" },
+        { actor: "Маркетолог", action: "Одобрение и визуал", details: "Правка текста + подготовка визуала вручную", auto: "mixed", decision: true },
+        { actor: "Агент", action: "Публикация", details: "Buffer API → Instagram, Telegram, LinkedIn", auto: "full" }
+      ]
+    }],
+    note: "Исправлено: агент не ждёт пинка от маркетолога, а сам инициирует по контент-плану."
+  },
+  {
+    id: 8, branch: "B1", subBranch: "1.1.1. Привлечь 3 000 лидов от стартапов",
+    title: "Таргетированная реклама в соцсетях",
+    priority: 2, badge: "new",
+    owner: "Маркетолог", trigger: "Cron ежемесячно + по запуску кампании",
+    output: "Лиды из рекламы", strategy: "1.1.1.7",
+    participants: ["Агент", "Маркетолог", "Bitrix24"],
+    phases: [{
+      steps: [
+        { actor: "Агент", action: "Анализ ЦА", details: "Сегментация по гео, интересам, поведению → рекомендации по таргетингу", auto: "full" },
+        { actor: "Маркетолог", action: "Утверждение ЦА и бюджета", details: "Согласование параметров кампании", auto: "manual", decision: true },
+        { actor: "Агент", action: "Генерация креативов и запуск", details: "Тексты и креативы → Meta Ads API / LinkedIn Ads", auto: "full" },
+        { actor: "Агент", action: "Мониторинг и A/B", details: "Еженедельный отчёт маркетологу", auto: "full" },
+        { actor: "Агент", action: "Обработка лидов", details: "Регистрация в Bitrix24 → ответы на комментарии", auto: "full" }
+      ]
+    }],
+    note: null
+  },
+  {
+    id: 9, branch: "B1", subBranch: "1.1.1. Привлечь 3 000 лидов от стартапов",
+    title: "SEO/GEO-диагностика и оптимизация сайта",
+    priority: 1, badge: "existing",
+    owner: "Дмитрий", trigger: "Cron ежемесячно",
+    output: "Оптимизированный сайт", strategy: "1.1.1.8",
+    participants: ["Агент", "Дмитрий", "Playwright"],
+    phases: [{
+      steps: [
+        { actor: "Агент", action: "SEO + GEO аудит", details: "Browser tool → технический и контентный аудит + GEO-видимость", auto: "full" },
+        { actor: "Агент", action: "Отчёт с рекомендациями", details: "Приоритизация исправлений → DM Дмитрию", auto: "full" },
+        { actor: "Дмитрий", action: "Одобрение рекомендаций", details: "Рассмотрение → выбор приоритетов", auto: "manual", decision: true },
+        { actor: "Агент", action: "Простые правки автоматически", details: "Playwright → метаданные, заголовки, alt-теги", auto: "full" },
+        { actor: "Дмитрий", action: "Технические правки", details: "Сложные изменения вручную", auto: "manual" }
+      ]
+    }],
+    note: "Исправлено: и SEO, и GEO делают полный аудит + оптимизацию (не только аудит)."
+  },
+
+  // 1.1.2 Скрининг
+  {
+    id: 10, branch: "B1", subBranch: "1.1.2. Довести 450 стартапов до Инвесткомитета",
+    title: "Скрининг и первичный анализ заявок стартапов",
+    priority: 1, badge: "new",
+    owner: "Associate", trigger: "Новая заявка в Bitrix24",
+    output: "Стартап на ИК или отклонён", strategy: "1.1.2",
+    participants: ["Агент", "Associate", "Bitrix24"],
+    phases: [{
+      steps: [
+        { actor: "Агент", action: "Автоматический скрининг", details: "Анализ команды, продукта, рынка, трекшна → скоринг по критериям ИК", auto: "full" },
+        { actor: "Агент", action: "Web-проверка стартапа", details: "СМИ, соцсети, реестры → дополнение профиля", auto: "full" },
+        { actor: "Агент", action: "Классификация", details: "Перспективный / требует встречи / отклонить → рекомендация с обоснованием", auto: "full" },
+        { actor: "Associate", action: "Ревью и переговоры", details: "Проверка рекомендаций → встречи с перспективными", auto: "manual" },
+        { actor: "Associate", action: "Решение по стартапу", details: "На ИК или отклонить → обновление статуса в Bitrix24", auto: "manual", decision: true }
+      ]
+    }],
+    note: null
+  },
+  {
+    id: 11, branch: "B1", subBranch: "1.1.2. Довести 450 стартапов до Инвесткомитета",
+    title: "Мониторинг стартапов до ИК",
+    priority: 2, badge: "existing",
+    owner: "Associate", trigger: "Входящий апдейт от стартапа",
+    output: "Стартап приглашён на ИК", strategy: "1.1.2",
+    participants: ["Агент", "Associate", "Стартап"],
+    phases: [{
+      steps: [
+        { actor: "Стартап", action: "Онбординг и апдейты", details: "/start в Telegram → регулярные апдейты", auto: "manual" },
+        { actor: "Агент", action: "Анализ динамики", details: "После каждого апдейта (не еженедельный!) → таблица startup_updates в SQLite", auto: "full" },
+        { actor: "Агент", action: "Сигнал при росте", details: "При значимом росте → уведомление с рекомендацией пригласить на ИК", auto: "full" },
+        { actor: "Associate", action: "Одобрение приглашения", details: "Решение пригласить → передача дальше", auto: "manual", decision: true }
+      ]
+    }],
+    note: null
+  },
+  {
+    id: 12, branch: "B1", subBranch: "1.1.2. Довести 450 стартапов до Инвесткомитета",
+    title: "Работа инвестиционного комитета",
+    priority: 2, badge: "existing",
+    owner: "Бекжан", trigger: "Стартап одобрен для ИК",
+    output: "Решение по стартапу", strategy: "1.1.2–1.1.3",
+    participants: ["Агент", "Бекжан", "Комитет", "Bitrix24"],
+    phases: [{
+      steps: [
+        { actor: "Агент", action: "Подготовка досье", details: "Сбор данных, финансовая модель, анализ рынка, конкуренты → пакет для ИК", auto: "full" },
+        { actor: "Бекжан", action: "Координация анализа", details: "Координация стажёров, формулировка задач для AI-анализа", auto: "manual" },
+        { actor: "Комитет", action: "Рассмотрение и голосование", details: "Решение: DD / отклонить / мониторинг", auto: "manual", decision: true },
+        { actor: "Агент", action: "Фиксация и маршрутизация", details: "Bitrix24 → уведомление стартапу → следующий процесс", auto: "full" }
+      ]
+    }],
+    note: "Требует детализации от Бекжана: формат заседания, критерии голосования, шаблон пакета."
+  },
+
+  // 1.1.3 DD
+  {
+    id: 13, branch: "B1", subBranch: "1.1.3. Провести Due Diligence (150 стартапов)",
+    title: "Due Diligence стартапов",
+    priority: 2, badge: "new",
+    owner: "Associate", trigger: "Решение ИК: «направить на DD»",
+    output: "Заключение DD", strategy: "1.1.3",
+    participants: ["Агент", "CEO", "Associate", "Стартап"],
+    phases: [{
+      steps: [
+        { actor: "Агент", action: "Запрос документов", details: "Чек-лист DD стартапу → трекинг получения", auto: "full" },
+        { actor: "Стартап", action: "Предоставление данных", details: "Документы, метрики, контракты", auto: "manual" },
+        { actor: "Агент", action: "Юридическая проверка", details: "Реестры, судебные дела, корпоративная история", auto: "full" },
+        { actor: "Агент", action: "Финансовый и рыночный анализ", details: "Верификация метрик, анализ рынка, конкурентов", auto: "full" },
+        { actor: "Агент", action: "Заключение DD", details: "Риски и рекомендации → пакет CEO/Associate", auto: "full" },
+        { actor: "CEO", action: "Финальное решение", details: "Ревью заключения → инвестировать / отклонить", auto: "manual", decision: true }
+      ]
+    }],
+    note: null
+  },
+
+  // 1.1.4
+  {
+    id: 14, branch: "B1", subBranch: "1.1.4. Проинвестировать в 30 стартапов",
+    title: "Оформление инвестиционных сделок",
+    priority: 3, badge: "new",
+    owner: "CEO", trigger: "Положительное заключение DD",
+    output: "Стартап в портфеле", strategy: "1.1.4",
+    participants: ["Агент", "CEO", "Стартап", "DocuSign"],
+    phases: [{
+      steps: [
+        { actor: "Агент", action: "Подготовка договора", details: "Шаблон + заполнение данных стартапа", auto: "full" },
+        { actor: "CEO", action: "Переговоры по условиям", details: "Согласование со стартапом", auto: "manual" },
+        { actor: "Агент", action: "Финализация и подписание", details: "DocuSign → контроль подписания и оплаты", auto: "full" },
+        { actor: "Агент", action: "Регистрация в портфеле", details: "SQLite → уведомление команде → запуск менторской программы", auto: "full" }
+      ]
+    }],
+    note: null
+  },
+
+  // 1.1.5
+  {
+    id: 15, branch: "B1", subBranch: "1.1.5. Менторство и мониторинг (30 стартапов)",
+    title: "Работа с портфельными стартапами (встречи + апдейты + маркетинг)",
+    priority: 2, badge: "merged",
+    owner: "Associate", trigger: "Cron по индивидуальному расписанию каждого стартапа",
+    output: "Актуальное досье + контент", strategy: "1.1.5",
+    participants: ["Агент", "Associate", "Стартап", "Calendly", "Buffer"],
+    phases: [
+      { name: "Фаза 1. Инициация контакта", steps: [
+        { actor: "Агент", action: "Автоматический запрос", details: "По календарю: рассылка стартапу — слоты Calendly или запрос апдейта", auto: "full" },
+        { actor: "Стартап", action: "Встреча или апдейт", details: "Вариант A: встреча (Calendly) | Вариант B: письменный апдейт", auto: "manual" }
+      ]},
+      { name: "Фаза 2. Обработка данных", steps: [
+        { actor: "Агент", action: "Захват содержания", details: "Встреча → Whisper-транскрибация | Апдейт → структурирование → досье в SQLite", auto: "full" },
+        { actor: "Агент", action: "Анализ динамики", details: "Выявление проблем и достижений после каждого контакта", auto: "full" }
+      ]},
+      { name: "Фаза 3. Действия", steps: [
+        { actor: "Associate", action: "Решения по проблемам", details: "Принятие мер при выявленных трудностях", auto: "manual", decision: true },
+        { actor: "Агент", action: "Маркетинг достижений", details: "Генерация материалов по достижениям → Buffer API", auto: "full" }
+      ]}
+    ],
+    note: "Объединяет бывшие процессы #15 и #25. Инициация — автоматическая, не человеком."
+  },
+
+  // 1.1.6
+  {
+    id: 16, branch: "B1", subBranch: "1.1.6. Продать долю с прибылью",
+    title: "Подготовка и реализация экзитов",
+    priority: 3, badge: "new",
+    owner: "CEO", trigger: "Cron ежеквартально + по событию (предложение о покупке)",
+    output: "Реализованный экзит", strategy: "1.1.6",
+    participants: ["Агент", "CEO", "Покупатели", "DocuSign"],
+    phases: [{
+      steps: [
+        { actor: "Агент", action: "Анализ портфеля", details: "Готовность стартапов к экзиту (рост, раунды, M&A активность)", auto: "full" },
+        { actor: "Агент", action: "Поиск покупателей", details: "Web search: фонды следующих раундов, стратеги, корпорации", auto: "full" },
+        { actor: "Агент", action: "Подготовка предложения", details: "Оценка доли, инвест-мемо, презентация → CEO", auto: "full" },
+        { actor: "CEO", action: "Переговоры с покупателями", details: "Согласование условий продажи", auto: "manual" },
+        { actor: "Агент", action: "Оформление сделки", details: "Документооборот, DocuSign → контроль оплаты → фиксация результата", auto: "full" }
+      ]
+    }],
+    note: null
+  },
+
+  // 1.2
+  {
+    id: 17, branch: "B1", subBranch: "1.2. Менторство как услуга — $25 000",
+    title: "Менторская программа как услуга",
+    priority: 3, badge: "new",
+    owner: "CEO", trigger: "Cron ежеквартально + входящие заявки",
+    output: "Менторство + доля в стартапах", strategy: "1.2",
+    participants: ["Агент", "CEO", "Стартап"],
+    phases: [{
+      steps: [
+        { actor: "Агент", action: "Программа и материалы", details: "Разработка/обновление учебной программы → видео, текст → сайт", auto: "full" },
+        { actor: "Агент", action: "Лидогенерация", details: "Те же каналы: ивенты, SMM, таргет, SEO, акселераторы, СМИ", auto: "full" },
+        { actor: "Агент", action: "Скрининг и отбор", details: "100 стартапов/год → вынесение на ИК", auto: "full" },
+        { actor: "CEO", action: "Проведение программы", details: "Менторство → получение доли в стартапе", auto: "manual" },
+        { actor: "Агент", action: "Обратная связь", details: "Сбор фидбэка → анализ эффективности → корректировка программы", auto: "full" }
+      ]
+    }],
+    note: null
+  },
+
+  // ==================== BRANCH 2 ====================
+  {
+    id: 18, branch: "B2", subBranch: "2.1. Синдикаты — $75 000",
+    title: "Формирование и развитие клуба инвесторов",
+    priority: 2, badge: "new",
+    owner: "Ануар", trigger: "Cron ежеквартально + входящие заявки",
+    output: "Новый член клуба инвесторов", strategy: "2.1.1",
+    participants: ["Агент", "Ануар", "Инвесторы"],
+    phases: [{
+      steps: [
+        { actor: "Агент", action: "Учебная программа", details: "Создание/обновление программы для инвесторов → материалы на сайт", auto: "full" },
+        { actor: "Агент", action: "Привлечение", details: "Ивенты, СМИ, SMM, таргет, SEO, партнёрства", auto: "full" },
+        { actor: "Агент", action: "Скрининг и проверка", details: "Web search, реестры → рекомендации Ануару", auto: "full" },
+        { actor: "Ануар", action: "Переговоры и вступление", details: "Личные звонки → решение о приёме", auto: "manual", decision: true },
+        { actor: "Агент", action: "Онбординг", details: "Рассылка материалов, добавление в чат, обновление базы", auto: "full" }
+      ]
+    }],
+    note: null
+  },
+  {
+    id: 19, branch: "B2", subBranch: "2.1. Синдикаты — $75 000",
+    title: "Синдикация — работа с инвесторами клуба",
+    priority: 2, badge: "existing",
+    owner: "Ануар", trigger: "Новый стартап с комитментом",
+    output: "Синдикатная сделка", strategy: "2.1.2–2.1.3",
+    participants: ["Агент", "Ануар", "Инвесторы", "Google Calendar", "DocuSign"],
+    phases: [{
+      steps: [
+        { actor: "Агент", action: "Аналитика по стартапу", details: "Подготовка материалов и визуала для инвесторов", auto: "full" },
+        { actor: "Агент", action: "Публикация и встреча", details: "Чат инвесторов + звонок (Google Calendar) + презентация", auto: "full" },
+        { actor: "Инвесторы", action: "Принятие решения", details: "Дедлайн +2 нед.", auto: "manual" },
+        { actor: "Агент", action: "Координация юридических", details: "Напоминания → сбор решений → юрист (DocuSign)", auto: "full" },
+        { actor: "Ануар", action: "Контроль закрытия", details: "Подписание договоров и оплата", auto: "manual", decision: true }
+      ]
+    }],
+    note: null
+  },
+  {
+    id: 20, branch: "B2", subBranch: "2.1. Синдикаты — $75 000",
+    title: "Отчётность для инвесторов клуба",
+    priority: 2, badge: "existing",
+    owner: "Ануар", trigger: "Cron квартал/год",
+    output: "Отчёт доставлен инвесторам", strategy: "2.1",
+    participants: ["Агент", "Ануар", "Associate", "startup.inc", "Gmail"],
+    phases: [{
+      steps: [
+        { actor: "Агент", action: "Сбор данных", details: "Через associate (звонки) + browser-автоматизация (startup.inc, логин Марата)", auto: "full" },
+        { actor: "Агент", action: "Переработка", details: "Word для годовых, текст для квартальных + поиск предыдущих писем", auto: "full" },
+        { actor: "Ануар", action: "Одобрение рассылки", details: "Ревью и утверждение", auto: "manual", decision: true },
+        { actor: "Агент", action: "BCC-рассылка", details: "Отправка инвесторам клуба", auto: "full" }
+      ]
+    }],
+    note: null
+  },
+  {
+    id: 21, branch: "B2", subBranch: "2.2. Управление капиталом",
+    title: "Привлечение LP в венчурный фонд",
+    priority: 3, badge: "new",
+    owner: "CEO", trigger: "Решение о создании фонда / начало фандрейзинга",
+    output: "LP в фонде", strategy: "2.2.1.2",
+    participants: ["Агент", "CEO", "Инвесторы"],
+    phases: [{
+      steps: [
+        { actor: "Агент", action: "Поиск LP", details: "5 категорий: институционалы КЗ, международные, корпорации, family office, HNWI → SQLite", auto: "full" },
+        { actor: "Агент", action: "Материалы под категории", details: "Pitch deck фонда, track record, стратегия → персонализация", auto: "full" },
+        { actor: "CEO", action: "Переговоры с LP", details: "Одобрение материалов → встречи с инвесторами", auto: "manual" },
+        { actor: "Агент", action: "Трекинг и закрытие", details: "CRM → напоминания → договоры → контроль оплаты", auto: "full" }
+      ]
+    }],
+    note: null
+  },
+  {
+    id: 22, branch: "B2", subBranch: "2.2. Управление капиталом",
+    title: "Управление венчурными фондами (собственный + корпоративный)",
+    priority: 3, badge: "new",
+    owner: "CEO", trigger: "Cron ежеквартально + по событию",
+    output: "Управляемый фонд", strategy: "2.2.1–2.2.3",
+    participants: ["Агент", "CEO", "Инвесторы"],
+    phases: [{
+      steps: [
+        { actor: "Агент", action: "Мониторинг портфеля", details: "NAV, доходность, IRR → квартальный отчёт для LP", auto: "full" },
+        { actor: "Агент", action: "Инвестирование", details: "Использует воронку: скрининг → ИК → DD → сделка", auto: "full" },
+        { actor: "Агент", action: "Экзиты", details: "Использует процесс «Подготовка экзитов»", auto: "full" },
+        { actor: "Агент", action: "Распределение прибыли", details: "Расчёт waterfall → документы → контроль выплат", auto: "full" },
+        { actor: "CEO", action: "Утверждение ключевых решений", details: "Распределения и стратегические решения по фонду", auto: "manual", decision: true }
+      ]
+    }],
+    note: null
+  },
+  {
+    id: 23, branch: "B2", subBranch: "2.2. Управление капиталом",
+    title: "Работа с корпорациями (B2B-партнёрства)",
+    priority: 3, badge: "existing",
+    owner: "Рысты", trigger: "Постоянно + по запросу корпорации",
+    output: "Сделки стартапов с корпорациями", strategy: "2.2.2",
+    participants: ["Агент", "Рысты"],
+    phases: [{
+      steps: [
+        { actor: "Рысты", action: "Сбор критериев корпорации", details: "Отрасль, стадия, технологии, бюджет", auto: "manual" },
+        { actor: "Агент", action: "Поиск и скрининг", details: "База + web search → шортлист с оценками", auto: "full" },
+        { actor: "Рысты", action: "Ручной отбор", details: "Выбор финалистов из шортлиста", auto: "manual", decision: true },
+        { actor: "Агент", action: "Ведение таблицы статусов", details: "SQLite: partnerships → отчёты по прогрессу", auto: "full" }
+      ]
+    }],
+    note: "Требует детализации от Рысты: шаблон критериев, формат отчётов прогресса."
+  },
+  {
+    id: 24, branch: "B2", subBranch: "2.2. Управление капиталом",
+    title: "Отборочные мероприятия (питчинги с корп. партнёрами)",
+    priority: 3, badge: "existing",
+    owner: "Рысты", trigger: "По соглашению с корп. партнёром",
+    output: "Проведённый отбор", strategy: "2.2.2",
+    participants: ["Агент", "Рысты", "Стартапы", "Google Forms"],
+    phases: [{
+      steps: [
+        { actor: "Агент", action: "Концепция и форма", details: "Создание концепции + Google Forms → рассылка стартапам", auto: "full" },
+        { actor: "Стартапы", action: "Подача заявок", details: "Заполнение формы → попадание в воронку", auto: "manual" },
+        { actor: "Агент", action: "Многоэтапный скрининг", details: "Анализ заявок → рекомендации для отбора", auto: "full" },
+        { actor: "Рысты", action: "Звонки с финалистами", details: "Согласование с партнёром", auto: "manual", decision: true },
+        { actor: "Агент", action: "Координация дня X", details: "Email-рассылка, напоминания, логистика", auto: "full" },
+        { actor: "Агент", action: "Агрегация результатов", details: "Голоса жюри → формирование победителей", auto: "full" }
+      ]
+    }],
+    note: null
+  },
+
+  // ==================== BRANCH 3 ====================
+  {
+    id: 25, branch: "B3", subBranch: "3.1. Кадровое обеспечение",
+    title: "HR: подбор и онбординг сотрудников",
+    priority: 3, badge: "new",
+    owner: "CEO", trigger: "Решение о найме (вакансия открыта)",
+    output: "Закрытая вакансия ≤1 мес.", strategy: "3.1.1",
+    participants: ["Агент", "CEO", "Кандидаты"],
+    phases: [{
+      steps: [
+        { actor: "Агент", action: "Публикация вакансии", details: "Генерация описания → hh.kz, LinkedIn → мониторинг откликов", auto: "full" },
+        { actor: "Агент", action: "Скрининг резюме", details: "Ранжирование кандидатов → шортлист с обоснованием", auto: "full" },
+        { actor: "CEO", action: "Собеседования", details: "Встречи с финалистами → выбор → оффер", auto: "manual", decision: true },
+        { actor: "Агент", action: "Онбординг", details: "Материалы, доступы, знакомство с командой, план на первый месяц", auto: "full" }
+      ]
+    }],
+    note: null
+  },
+  {
+    id: 26, branch: "B3", subBranch: "3.1. Кадровое обеспечение",
+    title: "HR: мониторинг удовлетворённости и развитие",
+    priority: 3, badge: "new",
+    owner: "CEO", trigger: "Cron ежеквартально",
+    output: "Текучесть ≤10%/год", strategy: "3.1.2",
+    participants: ["Агент", "CEO", "Google Forms"],
+    phases: [{
+      steps: [
+        { actor: "Агент", action: "Анонимный опрос", details: "Google Forms → сотрудники → анализ ответов", auto: "full" },
+        { actor: "Агент", action: "Отчёт с рекомендациями", details: "Что улучшить, риски ухода, предложения по развитию → DM CEO", auto: "full" },
+        { actor: "CEO", action: "Принятие мер", details: "Действия по результатам опроса", auto: "manual", decision: true }
+      ]
+    }],
+    note: null
+  },
+  {
+    id: 27, branch: "B3", subBranch: "3.2. Правовое обеспечение",
+    title: "Правовой мониторинг (Adilet.kz)",
+    priority: 1, badge: "existing",
+    owner: "CEO", trigger: "Cron еженедельно",
+    output: "Правовой дайджест в #ai-legal", strategy: "3.2",
+    participants: ["Агент", "CEO", "Adilet.kz"],
+    phases: [{
+      steps: [
+        { actor: "Агент", action: "Сканирование НПА", details: "Browser → adilet.zan.kz → новые НПА за неделю", auto: "full" },
+        { actor: "Агент", action: "Анализ влияния", details: "Оценка применимости к Activat VC", auto: "full" },
+        { actor: "Агент", action: "Дайджест с рекомендациями", details: "#ai-legal @CEO", auto: "full" },
+        { actor: "CEO", action: "Принятие решений", details: "Действия по дайджесту", auto: "manual", decision: true }
+      ]
+    }],
+    note: "Исправлено: юриста в штате не будет. Агент = юрист. Решения принимает CEO."
+  },
+  {
+    id: 28, branch: "B3", subBranch: "3.2. Правовое обеспечение",
+    title: "Юридическое сопровождение сделок",
+    priority: 2, badge: "new",
+    owner: "CEO", trigger: "Запрос на подготовку/проверку договора",
+    output: "Подписанный договор", strategy: "3.2",
+    participants: ["Агент", "CEO", "DocuSign"],
+    phases: [{
+      steps: [
+        { actor: "Агент", action: "Подготовка договора", details: "По шаблону → проверка на риски → рекомендации", auto: "full" },
+        { actor: "CEO", action: "Ревью и согласование", details: "Проверка и переговоры с контрагентом", auto: "manual", decision: true },
+        { actor: "Агент", action: "Финализация и подписание", details: "DocuSign → контроль подписания → архив", auto: "full" }
+      ]
+    }],
+    note: null
+  },
+  {
+    id: 29, branch: "B3", subBranch: "3.3. Финансовое планирование",
+    title: "Стратегическое планирование компании (включая финансовый контроль)",
+    priority: 1, badge: "merged",
+    owner: "Собственник", trigger: "Cron (1 ноября) ИЛИ принудительно от учредителя",
+    output: "Утверждённая стратегия", strategy: "3.3 + сквозной",
+    participants: ["Агент", "Собственник"],
+    phases: [
+      { name: "Фаза 1. Анализ исполнения", steps: [
+        { actor: "Агент", action: "Анализ исполнения", details: "Финансы (openpyxl), KPI: лиды, ИК, DD, инвестиции, маркетинг", auto: "full" },
+        { actor: "Агент", action: "Отчёт с рекомендациями", details: "Передача собственнику", auto: "full" }
+      ]},
+      { name: "Фаза 2. Сбор вводных и проект", steps: [
+        { actor: "Собственник", action: "Вводные направлений", details: "Голосом/текстом: приоритеты, направления", auto: "manual" },
+        { actor: "Агент", action: "Черновик стратегии", details: "На скелете предыдущей → включая финансовый план", auto: "full" },
+        { actor: "Собственник", action: "Первичное согласование", details: "Ревью черновика", auto: "manual", decision: true }
+      ]},
+      { name: "Фаза 3. Командное согласование", steps: [
+        { actor: "Агент", action: "Рассылка команде", details: "Все сотрудники → сбор обратной связи → собственнику", auto: "full" },
+        { actor: "Собственник", action: "Утверждение", details: "Окончательная версия стратегии", auto: "manual", decision: true },
+        { actor: "Агент", action: "Публикация в облаке", details: "Постоянное хранение, доступ всем сотрудникам", auto: "full" }
+      ]}
+    ],
+    note: "Поглощает бывший процесс «Бюджетный контролёр». Финансовый анализ = часть общего контроля исполнения стратегии."
+  },
+  {
+    id: 30, branch: "B3", subBranch: "3.3. Финансовое планирование",
+    title: "Маркетинговая стратегия",
+    priority: 2, badge: "existing",
+    owner: "Маркетолог → Собственник", trigger: "Cron ежеквартально (анализ) + ежегодно (новая стратегия)",
+    output: "Утверждённая маркетинговая стратегия", strategy: "3.3 (маркетинг)",
+    participants: ["Агент", "Маркетолог", "Собственник"],
+    phases: [{
+      steps: [
+        { actor: "Агент", action: "Анализ KPI", details: "Лиды, охваты, конверсии, ROI каналов → заключение", auto: "full" },
+        { actor: "Маркетолог", action: "Вводные для новой стратегии", details: "Комментарии и корректировки", auto: "manual" },
+        { actor: "Агент", action: "Подготовка стратегии", details: "Новый маркетинговый план", auto: "full" },
+        { actor: "Маркетолог", action: "Согласование", details: "Ревью и одобрение", auto: "manual", decision: true },
+        { actor: "Собственник", action: "Окончательное утверждение", details: "Сохранение в облаке", auto: "manual", decision: true }
+      ]
+    }],
+    note: null
+  },
+  {
+    id: 31, branch: "B3", subBranch: "3.4. Бухгалтерский учёт",
+    title: "Контроль бухгалтерского и налогового учёта",
+    priority: 4, badge: "new",
+    owner: "CEO", trigger: "Cron ежемесячно + перед налоговыми дедлайнами",
+    output: "Учёт без претензий", strategy: "3.4",
+    participants: ["Агент", "CEO", "Бухгалтер"],
+    phases: [{
+      steps: [
+        { actor: "Бухгалтер", action: "Ведение учёта", details: "Аутсорс: проведение операций, отчётность", auto: "manual" },
+        { actor: "Агент", action: "Запрос отчётов", details: "От бухгалтера → проверка на аномалии", auto: "full" },
+        { actor: "Агент", action: "Напоминания о дедлайнах", details: "Контроль налоговых сроков", auto: "full" },
+        { actor: "Агент", action: "Месячный отчёт CEO", details: "Статус учёта, приближающиеся дедлайны, проблемы", auto: "full" }
+      ]
+    }],
+    note: null
+  },
+  {
+    id: 32, branch: "B3", subBranch: "3.5. Техническое функционирование",
+    title: "Техническое обеспечение сайта и инфраструктуры",
+    priority: 2, badge: "new",
+    owner: "Дмитрий", trigger: "Cron ежедневно + ежемесячно + алерты",
+    output: "Аптайм 99.9%", strategy: "3.5",
+    participants: ["Агент", "Дмитрий"],
+    phases: [
+      { name: "Ежедневно", steps: [
+        { actor: "Агент", action: "Проверка доступности", details: "Uptime + SSL-сертификаты + домены (срок)", auto: "full" }
+      ]},
+      { name: "Ежемесячно", steps: [
+        { actor: "Агент", action: "Бэкап и аудит", details: "Бэкап кода (Git), сканирование безопасности, UX-аудит", auto: "full" }
+      ]},
+      { name: "При сбое", steps: [
+        { actor: "Агент", action: "Алерт + диагностика", details: "Дмитрию + автоматическая диагностика + рекомендации", auto: "full" },
+        { actor: "Дмитрий", action: "Исправление", details: "Технические проблемы вручную", auto: "manual" }
+      ]}
+    ],
+    note: null
+  },
+  {
+    id: 33, branch: "B3", subBranch: "3.6. Организационные вопросы",
+    title: "Контроль корпоративных лицензий и регистраций",
+    priority: 4, badge: "new",
+    owner: "CEO", trigger: "Cron ежемесячно",
+    output: "Все лицензии в силе", strategy: "3.6.1",
+    participants: ["Агент", "CEO"],
+    phases: [{
+      steps: [
+        { actor: "Агент", action: "Проверка дедлайнов", details: "Лицензии, регистрации, разрешения → срок действия → напоминания за 2 мес.", auto: "full" },
+        { actor: "Агент", action: "Документы на продление", details: "Подготовка → DM CEO", auto: "full" },
+        { actor: "CEO", action: "Подписание и подача", details: "Финализация документов", auto: "manual", decision: true }
+      ]
+    }],
+    note: null
+  },
+
+  // ==================== CROSS-CUTTING ====================
+  {
+    id: 34, branch: "BX", subBranch: "Конкурентная разведка и аналитика",
+    title: "Мониторинг конкурентов",
+    priority: 1, badge: "existing",
+    owner: "общекомандный", trigger: "Cron ежедневно (ночью)",
+    output: "Дайджест в #ai-competitors", strategy: "сквозной",
+    participants: ["Агент"],
+    phases: [{
+      steps: [
+        { actor: "Агент", action: "Разовая настройка", details: "Сайты/соцсети конкурентов → SQLite", auto: "full" },
+        { actor: "Агент", action: "Ежедневный скан", details: "Browser + Google Search → выявление событий → дедупликация", auto: "full" },
+        { actor: "Агент", action: "Утренний дайджест", details: "#ai-competitors", auto: "full" }
+      ]
+    }],
+    note: null
+  },
+  {
+    id: 35, branch: "BX", subBranch: "Конкурентная разведка и аналитика",
+    title: "Мониторинг отклонённых стартапов",
+    priority: 1, badge: "existing",
+    owner: "общекомандный", trigger: "Cron еженедельно",
+    output: "Отчёт в #ai-portfolio", strategy: "сквозной",
+    participants: ["Агент", "Bitrix24"],
+    phases: [{
+      steps: [
+        { actor: "Агент", action: "Выгрузка отклонённых", details: "Bitrix24 API (rejected) → web search по каждому", auto: "full" },
+        { actor: "Агент", action: "Анализ успешности", details: "Web → расчёт упущенной выгоды", auto: "full" },
+        { actor: "Агент", action: "Отчёт с улучшениями", details: "Анализ причин → предложения по критериям → #ai-portfolio", auto: "full" }
+      ]
+    }],
+    note: null
+  },
+  {
+    id: 36, branch: "BX", subBranch: "Конкурентная разведка и аналитика",
+    title: "Сбор отчётных данных по воронке",
+    priority: 1, badge: "existing",
+    owner: "Маркетолог", trigger: "Cron еженедельно",
+    output: "Отчёт по воронке в #ai-marketing", strategy: "сквозной",
+    participants: ["Агент", "Маркетолог", "Bitrix24"],
+    phases: [{
+      steps: [
+        { actor: "Агент", action: "Выгрузка из CRM", details: "Bitrix24 API → фильтрация за неделю", auto: "full" },
+        { actor: "Агент", action: "Формирование отчёта", details: "Извлечение данных + динамика → отчёт", auto: "full" },
+        { actor: "Агент", action: "Публикация", details: "#ai-marketing или DM Маркетологу", auto: "full" }
+      ]
+    }],
+    note: null
+  },
+  {
+    id: 37, branch: "BX", subBranch: "Контент и материалы",
+    title: "Видеоконтент pipeline (локализация)",
+    priority: 3, badge: "existing",
+    owner: "Маркетолог", trigger: "Cron еженедельно",
+    output: "Локализованный контент на YouTube/IG/FB/LinkedIn", strategy: "сквозной",
+    participants: ["Агент", "Маркетолог", "HeyGen", "Buffer", "YouTube"],
+    phases: [{
+      steps: [
+        { actor: "Агент", action: "Поиск видео", details: "Web search → зарубежный материал", auto: "full" },
+        { actor: "Агент", action: "Запрос разрешения автора", details: "Email → без разрешения публикация невозможна", auto: "full" },
+        { actor: "Агент", action: "Транскрибация и перевод", details: "Whisper → перевод → HeyGen API → рекламные вставки", auto: "full" },
+        { actor: "Агент", action: "Публикация", details: "YouTube API + шортсы (Opus Clip/FFmpeg) → Buffer API", auto: "full" }
+      ]
+    }],
+    note: null
+  },
+  {
+    id: 38, branch: "BX", subBranch: "Контент и материалы",
+    title: "Создание презентаций",
+    priority: 3, badge: "existing",
+    owner: "любой сотрудник", trigger: "По запросу любого сотрудника",
+    output: "Готовая презентация", strategy: "сквозной",
+    participants: ["Агент", "Сотрудник"],
+    phases: [{
+      steps: [
+        { actor: "Сотрудник", action: "Наговаривает вводные", details: "Аудитория, тема, ключевые тезисы", auto: "manual" },
+        { actor: "Агент", action: "Каркас презентации", details: "Из базы существующих слайдов", auto: "full" },
+        { actor: "Сотрудник", action: "Одобрение каркаса", details: "Проверка структуры", auto: "manual", decision: true },
+        { actor: "Агент", action: "Создание визуала", details: "PPTX → итерации с сотрудником", auto: "full" }
+      ]
+    }],
+    note: "Исправлено: пользователь — не только маркетолог, а любой сотрудник."
+  },
+  {
+    id: 39, branch: "BX", subBranch: "Поддержка операций",
+    title: "Обновление базы VC-фондов на сайте",
+    priority: 2, badge: "existing",
+    owner: "Исмаил", trigger: "Cron ежемесячно",
+    output: "Актуальная база VC-фондов на сайте", strategy: "сквозной",
+    participants: ["Агент", "Исмаил"],
+    phases: [{
+      steps: [
+        { actor: "Агент", action: "Проверка фондов", details: "Browser → активность каждого фонда + поиск новых", auto: "full" },
+        { actor: "Агент", action: "Отчёт Исмаилу", details: "Изменения и предложения → DM", auto: "full" },
+        { actor: "Исмаил", action: "Одобрение изменений", details: "Что добавить, что убрать", auto: "manual", decision: true },
+        { actor: "Агент", action: "Обновление сайта", details: "Применение изменений", auto: "full" }
+      ]
+    }],
+    note: null
+  },
+  {
+    id: 40, branch: "BX", subBranch: "Поддержка операций",
+    title: "Обратная связь от стартаперов",
+    priority: 2, badge: "merged",
+    owner: "Марат / Associate", trigger: "Сигнал от сотрудника (позитивное событие / встреча)",
+    output: "Фидбэк в CRM + контент", strategy: "сквозной",
+    participants: ["Агент", "Марат", "Associate", "Стартап", "Gmail", "Buffer"],
+    phases: [{
+      steps: [
+        { actor: "Марат", action: "Сигнал о возможности", details: "Сотрудник отмечает позитивное событие", auto: "manual" },
+        { actor: "Агент", action: "Запрос фидбэка", details: "Генерация письма → отправка стартапу", auto: "full" },
+        { actor: "Стартап", action: "Ответ", details: "Парсинг через Gmail MCP", auto: "manual" },
+        { actor: "Агент", action: "Структурирование", details: "Фиксация в CRM", auto: "full" },
+        { actor: "Агент", action: "Контент при позитиве", details: "Генерация репоста → Buffer API", auto: "full" }
+      ]
+    }],
+    note: null
+  }
+];
+
+// === LOGIC ===
+
+const teamMembers = ["CEO", "Associate", "Исмаил", "Маркетолог", "Дмитрий", "Ануар", "Рысты", "Бекжан", "Марат", "Собственник", "Сотрудник", "Комитет", "Участник"];
+const systems = ["Bitrix24", "Calendly", "Buffer", "startup.inc", "Google Calendar", "Google Forms", "DocuSign", "Gmail", "HeyGen", "Brevo", "Playwright", "Adilet.kz", "YouTube", "hh.kz", "LinkedIn"];
+
+function getActorType(actor) {
+  if (actor === "Агент") return "agent";
+  if (teamMembers.includes(actor)) return "team";
+  if (systems.includes(actor)) return "sys";
+  return "ext";
+}
+
+function getActorColors(actor) {
+  const type = getActorType(actor);
+  const map = {
+    team: { bg: "#E6F1FB", stroke: "#185FA5", text: "#0C447C" },
+    agent: { bg: "#E1F5EE", stroke: "#0F6E56", text: "#085041" },
+    ext: { bg: "#FBEAF0", stroke: "#993556", text: "#72243E" },
+    sys: { bg: "#F1EFE8", stroke: "#5F5E5A", text: "#2C2C2A" }
+  };
+  return map[type];
+}
+
+function escapeText(t) {
+  return (t || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+function wrapText(text, maxChars) {
+  if (text.length <= maxChars) return [text];
+  const words = text.split(' ');
+  const lines = [];
+  let curr = '';
+  for (const w of words) {
+    if ((curr + ' ' + w).trim().length <= maxChars) {
+      curr = (curr + ' ' + w).trim();
+    } else {
+      if (curr) lines.push(curr);
+      curr = w;
+    }
+  }
+  if (curr) lines.push(curr);
+  return lines.slice(0, 3);
+}
+
+// --- Swimlane renderer ---
+function renderSwimlane(phase, phaseIdx, processId) {
+  const steps = phase.steps;
+  const actors = [];
+  steps.forEach(s => { if (!actors.includes(s.actor)) actors.push(s.actor); });
+
+  const colWidth = Math.max(140, Math.min(200, Math.floor(960 / actors.length)));
+  const headerH = 44;
+  const rowH = 76;
+  const totalW = colWidth * actors.length;
+  const totalH = headerH + rowH * steps.length + 20;
+
+  let svg = `<svg class="swimlane" viewBox="0 0 ${totalW} ${totalH}" xmlns="http://www.w3.org/2000/svg" role="img">`;
+  svg += `<defs>
+    <marker id="arrow-${processId}-${phaseIdx}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="#888780" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>`;
+
+  svg += `<rect x="0" y="0" width="${totalW}" height="${headerH}" fill="#F5F3EC"/>`;
+
+  actors.forEach((actor, i) => {
+    const x = i * colWidth;
+    const c = getActorColors(actor);
+    svg += `<rect x="${x}" y="0" width="${colWidth}" height="${headerH}" fill="${c.bg}" stroke="${c.stroke}" stroke-width="0.7"/>`;
+    svg += `<text x="${x + colWidth/2}" y="${headerH/2}" text-anchor="middle" dominant-baseline="central" fill="${c.text}" font-size="13" font-weight="500" font-family="-apple-system, sans-serif">${escapeText(actor)}</text>`;
+    if (i > 0) {
+      svg += `<line x1="${x}" y1="${headerH}" x2="${x}" y2="${totalH}" stroke="#E0DED7" stroke-width="0.8" stroke-dasharray="3 4"/>`;
+    }
+  });
+
+  steps.forEach((step, idx) => {
+    const colIdx = actors.indexOf(step.actor);
+    const x = colIdx * colWidth + 10;
+    const y = headerH + idx * rowH + 10;
+    const w = colWidth - 20;
+    const h = rowH - 20;
+    const c = getActorColors(step.actor);
+    const strokeW = step.decision ? 1.8 : 0.8;
+
+    if (step.decision) {
+      svg += `<rect x="${x-3}" y="${y-3}" width="${w+6}" height="${h+6}" rx="9" fill="none" stroke="#BA7517" stroke-width="1.6" stroke-dasharray="4 3"/>`;
+    }
+
+    svg += `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="6" fill="${c.bg}" stroke="${c.stroke}" stroke-width="${strokeW}"/>`;
+
+    svg += `<circle cx="${x + 14}" cy="${y + 14}" r="9" fill="${c.stroke}"/>`;
+    svg += `<text x="${x + 14}" y="${y + 14}" text-anchor="middle" dominant-baseline="central" fill="white" font-size="11" font-weight="600" font-family="-apple-system, sans-serif">${idx + 1}</text>`;
+
+    const maxChars = Math.floor((w - 36) / 5.5);
+    const lines = wrapText(step.action, maxChars);
+    const lineHeight = 13;
+    const startY = y + h/2 - (lines.length - 1) * lineHeight / 2;
+    lines.forEach((line, li) => {
+      svg += `<text x="${x + 30}" y="${startY + li * lineHeight}" dominant-baseline="central" fill="${c.text}" font-size="11.5" font-family="-apple-system, sans-serif" font-weight="${li === 0 ? 500 : 400}">${escapeText(line)}</text>`;
+    });
+
+    if (step.decision) {
+      svg += `<text x="${x + w - 4}" y="${y + 10}" text-anchor="end" dominant-baseline="hanging" fill="#854F0B" font-size="9" font-weight="600" font-family="-apple-system, sans-serif">ОДОБРЕНИЕ</text>`;
+    }
+
+    if (idx < steps.length - 1) {
+      const nextColIdx = actors.indexOf(steps[idx + 1].actor);
+      const fromX = colIdx * colWidth + colWidth/2;
+      const fromY = y + h;
+      const toX = nextColIdx * colWidth + colWidth/2;
+      const toY = headerH + (idx + 1) * rowH + 10;
+
+      if (nextColIdx === colIdx) {
+        svg += `<line x1="${fromX}" y1="${fromY}" x2="${toX}" y2="${toY}" stroke="#888780" stroke-width="1.3" marker-end="url(#arrow-${processId}-${phaseIdx})"/>`;
+      } else {
+        const midY = fromY + (toY - fromY) / 2;
+        svg += `<path d="M ${fromX} ${fromY} L ${fromX} ${midY} L ${toX} ${midY} L ${toX} ${toY}" fill="none" stroke="#888780" stroke-width="1.3" marker-end="url(#arrow-${processId}-${phaseIdx})"/>`;
+      }
+    }
+  });
+
+  svg += '</svg>';
+  return svg;
+}
+
+// --- Table renderer ---
+function renderTable(phases) {
+  let html = '<table class="steps-table"><thead><tr><th class="num">№</th><th class="actor">Актор</th><th>Действие</th><th>Детали</th><th class="auto">Авто</th></tr></thead><tbody>';
+  let n = 1;
+  phases.forEach(phase => {
+    if (phases.length > 1 && phase.name) {
+      html += `<tr class="phase-row"><td colspan="5">${escapeText(phase.name)}</td></tr>`;
+    }
+    phase.steps.forEach(step => {
+      const type = getActorType(step.actor);
+      const tagClass = `tag-${type}`;
+      const autoClass = `auto-${step.auto}`;
+      const autoText = { full: "Агент", mixed: "Смешано", manual: "Человек" }[step.auto];
+      const decisionMark = step.decision ? ' <span class="actor-tag tag-decision" style="margin-left:4px">одобрение</span>' : '';
+      html += `<tr>
+        <td class="num">${n}</td>
+        <td class="actor"><span class="actor-tag ${tagClass}">${escapeText(step.actor)}</span>${decisionMark}</td>
+        <td><strong>${escapeText(step.action)}</strong></td>
+        <td>${escapeText(step.details)}</td>
+        <td class="auto"><span class="auto-tag ${autoClass}">${autoText}</span></td>
+      </tr>`;
+      n++;
+    });
+  });
+  html += '</tbody></table>';
+  return html;
+}
+
+// --- Process renderer ---
+function renderProcess(p) {
+  const priorityLabel = `П${p.priority}`;
+  const badgeText = { new: "новый", existing: "существующий", merged: "объединённый" }[p.badge];
+  let html = `<article class="process" id="p${p.id}">
+    <div class="process-header">
+      <span class="priority-badge p${p.priority}">${priorityLabel}</span>
+      <h3 class="process-title">${p.id}. ${escapeText(p.title)}</h3>
+      <span class="badge badge-${p.badge}">${badgeText}</span>
+      <div class="process-meta">
+        <span><strong>Владелец:</strong> ${escapeText(p.owner)}</span>
+        <span><strong>Триггер:</strong> ${escapeText(p.trigger)}</span>
+        <span><strong>Выход:</strong> ${escapeText(p.output)}</span>
+        <span><strong>Стратегия:</strong> ${escapeText(p.strategy)}</span>
+      </div>
+    </div>`;
+
+  p.phases.forEach((phase, idx) => {
+    if (p.phases.length > 1 && phase.name) {
+      html += `<div class="phase-title">${escapeText(phase.name)}</div>`;
+    }
+    html += `<div class="swimlane-wrapper">${renderSwimlane(phase, idx, p.id)}</div>`;
+  });
+
+  html += renderTable(p.phases);
+
+  if (p.note) {
+    html += `<div class="note-block">⚠️ ${escapeText(p.note)}</div>`;
+  }
+
+  html += '<a href="#top" class="back-top">↑ К оглавлению</a>';
+  html += '</article>';
+  return html;
+}
+
+// --- Matrix ---
+function renderMatrix() {
+  const people = ["CEO", "Associate", "Исмаил", "Маркетолог", "Дмитрий", "Ануар", "Рысты", "Бекжан", "Марат", "Собственник"];
+
+  let html = '<thead><tr><th class="process-idx">#</th><th class="process-name">Процесс</th>';
+  people.forEach(p => {
+    html += `<th class="rotated"><span>${escapeText(p)}</span></th>`;
+  });
+  html += `<th class="rotated"><span>Агент</span></th><th class="rotated"><span>Внешние</span></th></tr></thead><tbody>`;
+
+  // Group processes by branch
+  const branchOrder = ["B1", "B2", "B3", "BX"];
+  branchOrder.forEach(branchKey => {
+    const branchProcesses = processes.filter(pr => pr.branch === branchKey);
+    if (branchProcesses.length === 0) return;
+    html += `<tr class="branch-row"><td colspan="${2 + people.length + 2}">${escapeText(BRANCHES[branchKey].title)}</td></tr>`;
+    branchProcesses.forEach(p => {
+      html += `<tr><td class="process-idx">${p.id}</td><td class="process-name"><a href="#p${p.id}" style="color: inherit; text-decoration: none;">${escapeText(p.title)}</a></td>`;
+      people.forEach(person => {
+        const isOwner = p.owner.includes(person);
+        const isPart = p.participants.includes(person);
+        let dot = '';
+        if (isOwner) dot = '<span class="owner-dot" title="владелец"></span>';
+        else if (isPart) dot = '<span class="part-dot" title="участник"></span>';
+        html += `<td class="role-cell">${dot}</td>`;
+      });
+      const hasAgent = p.participants.includes("Агент");
+      html += `<td class="role-cell">${hasAgent ? '<span class="agent-dot"></span>' : ''}</td>`;
+      const hasExt = p.participants.some(a => getActorType(a) === 'ext');
+      html += `<td class="role-cell">${hasExt ? '<span class="ext-dot"></span>' : ''}</td>`;
+      html += `</tr>`;
+    });
+  });
+
+  html += '</tbody>';
+  return html;
+}
+
+// --- TOC ---
+function renderTOC() {
+  const branchOrder = ["B1", "B2", "B3", "BX"];
+  let html = '';
+  branchOrder.forEach(branchKey => {
+    const branchProcesses = processes.filter(p => p.branch === branchKey);
+    if (branchProcesses.length === 0) return;
+    html += `<div class="toc-branch">${escapeText(BRANCHES[branchKey].title)}</div>`;
+
+    // Group by sub-branch
+    const subGroups = {};
+    branchProcesses.forEach(p => {
+      if (!subGroups[p.subBranch]) subGroups[p.subBranch] = [];
+      subGroups[p.subBranch].push(p);
+    });
+
+    Object.entries(subGroups).forEach(([subBranch, list]) => {
+      html += `<div class="toc-subbranch">${escapeText(subBranch)}</div>`;
+      html += '<div class="toc-items">';
+      list.forEach(p => {
+        const priorityChip = `<span class="priority-badge p${p.priority}" style="font-size:9px; padding:1px 4px;">П${p.priority}</span>`;
+        html += `<div class="toc-item">${priorityChip}<a href="#p${p.id}"><span class="toc-num">${p.id}.</span>${escapeText(p.title)}</a></div>`;
+      });
+      html += '</div>';
+    });
+  });
+  return html;
+}
+
+// --- Process rendering with branch banners ---
+function renderAllProcesses() {
+  const branchOrder = ["B1", "B2", "B3", "BX"];
+  let html = '';
+  branchOrder.forEach(branchKey => {
+    const branchProcesses = processes.filter(p => p.branch === branchKey);
+    if (branchProcesses.length === 0) return;
+
+    html += `<div class="branch-banner">
+      <h2>${escapeText(BRANCHES[branchKey].title)}</h2>
+      <small>${escapeText(BRANCHES[branchKey].subtitle)}</small>
+    </div>`;
+
+    let currentSubBranch = '';
+    branchProcesses.forEach(p => {
+      if (p.subBranch !== currentSubBranch) {
+        html += `<div class="subbranch-banner">${escapeText(p.subBranch)}</div>`;
+        currentSubBranch = p.subBranch;
+      }
+      html += renderProcess(p);
+    });
+  });
+  return html;
+}
+
+// --- Initialize ---
+document.getElementById('matrix').innerHTML = renderMatrix();
+document.getElementById('toc').innerHTML = renderTOC();
+document.getElementById('processes').innerHTML = renderAllProcesses();
+</script>
 </body>
 </html>
