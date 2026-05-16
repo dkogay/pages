@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Activat VC — Приоритизация автоматизации процессов</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FAFAF7;
+    --surface: #FFFFFF;
+    --text: #2C2C2A;
+    --text-muted: #5F5E5A;
+    --text-light: #888780;
+    --border: rgba(0,0,0,0.09);
+    --border-strong: rgba(0,0,0,0.18);
+
+    --c1-bg: #E1F5EE;
+    --c1-stroke: #0F6E56;
+    --c1-text: #085041;
+    --c1-light: #F0FAF6;
+    --c1-badge: #0F6E56;
+
+    --c2-bg: #FAEEDA;
+    --c2-stroke: #854F0B;
+    --c2-text: #633806;
+    --c2-light: #FEF8EF;
+    --c2-badge: #B06A10;
+
+    --c3-bg: #EEF0F7;
+    --c3-stroke: #4355A0;
+    --c3-text: #2D3B7A;
+    --c3-light: #F5F6FB;
+    --c3-badge: #4355A0;
+
+    --header-bg: linear-gradient(135deg, #1e3a5f 0%, #0f172a 100%);
+    --accent: #2563EB;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* ─── HEADER ─── */
+  .header {
+    background: var(--header-bg);
+    color: white;
+    padding: 48px 32px 40px;
+  }
+  .header-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .header-tag {
+    display: inline-block;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 20px;
+    padding: 3px 12px;
+    font-size: 11px;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+  .header h1 {
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 10px;
+  }
+  .header-sub {
+    opacity: 0.72;
+    font-size: 15px;
+    max-width: 640px;
+    margin-bottom: 32px;
+  }
+  .header-stats {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+  .hstat {
+    text-align: center;
+  }
+  .hstat-num {
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1;
+  }
+  .hstat-label {
+    font-size: 11px;
+    opacity: 0.65;
+    margin-top: 4px;
+    letter-spacing: 0.3px;
+  }
+  .hstat-num.green { color: #4ADE80; }
+  .hstat-num.amber { color: #FCD34D; }
+  .hstat-num.blue  { color: #93C5FD; }
+
+  /* ─── MAIN ─── */
+  .main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  /* ─── LEGEND ─── */
+  .legend-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 36px;
+  }
+  .legend-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    border: 1.5px solid;
+  }
+  .legend-chip.c1 { background: var(--c1-bg); border-color: var(--c1-stroke); color: var(--c1-text); }
+  .legend-chip.c2 { background: var(--c2-bg); border-color: var(--c2-stroke); color: var(--c2-text); }
+  .legend-chip.c3 { background: var(--c3-bg); border-color: var(--c3-stroke); color: var(--c3-text); }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .legend-dot.c1 { background: var(--c1-stroke); }
+  .legend-dot.c2 { background: var(--c2-stroke); }
+  .legend-dot.c3 { background: var(--c3-stroke); }
+
+  /* ─── CATEGORY SECTION ─── */
+  .cat-section { margin-bottom: 48px; }
+
+  .cat-banner {
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin-bottom: 16px;
+    border-left: 4px solid;
+  }
+  .cat-banner.c1 { background: var(--c1-bg); border-color: var(--c1-stroke); }
+  .cat-banner.c2 { background: var(--c2-bg); border-color: var(--c2-stroke); }
+  .cat-banner.c3 { background: var(--c3-bg); border-color: var(--c3-stroke); }
+
+  .cat-banner-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+  .cat-num {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+  .cat-num.c1 { background: var(--c1-stroke); color: white; }
+  .cat-num.c2 { background: var(--c2-badge); color: white; }
+  .cat-num.c3 { background: var(--c3-badge); color: white; }
+
+  .cat-title { font-size: 18px; font-weight: 600; }
+  .cat-title.c1 { color: var(--c1-text); }
+  .cat-title.c2 { color: var(--c2-text); }
+  .cat-title.c3 { color: var(--c3-text); }
+
+  .cat-desc { font-size: 13px; opacity: 0.85; }
+  .cat-desc.c1 { color: var(--c1-text); }
+  .cat-desc.c2 { color: var(--c2-text); }
+  .cat-desc.c3 { color: var(--c3-text); }
+
+  /* ─── PROCESS GRID ─── */
+  .process-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 12px;
+  }
+
+  .pcard {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    transition: box-shadow 0.15s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .pcard:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+
+  .pcard::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    border-radius: 10px 10px 0 0;
+  }
+  .pcard.c1::before { background: var(--c1-stroke); }
+  .pcard.c2::before { background: var(--c2-badge); }
+  .pcard.c3::before { background: var(--c3-badge); }
+
+  .pcard-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .pcard-id {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 4px;
+    flex-shrink: 0;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    letter-spacing: 0.3px;
+  }
+  .pcard-id.c1 { background: var(--c1-bg); color: var(--c1-text); }
+  .pcard-id.c2 { background: var(--c2-bg); color: var(--c2-text); }
+  .pcard-id.c3 { background: var(--c3-bg); color: var(--c3-text); }
+
+  .pcard-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    flex: 1;
+  }
+
+  .pcard-why {
+    font-size: 12.5px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    line-height: 1.5;
+  }
+
+  /* ─── SPEED INDICATOR ─── */
+  .speed-block {
+    background: #F7F7F4;
+    border-radius: 7px;
+    padding: 10px 12px;
+  }
+  .speed-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .speed-before, .speed-after {
+    font-size: 11.5px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+  .speed-before { background: #FEE2E2; color: #991B1B; }
+  .speed-after  { background: #DCFCE7; color: #14532D; }
+  .speed-arrow  { font-size: 14px; color: var(--text-light); flex-shrink: 0; }
+
+  .speed-bar-wrap {
+    background: #E5E5E0;
+    border-radius: 4px;
+    height: 5px;
+    overflow: hidden;
+  }
+  .speed-bar {
+    height: 100%;
+    border-radius: 4px;
+    background: linear-gradient(90deg, #4ADE80, #16A34A);
+    transition: width 0.3s ease;
+  }
+  .speed-label { font-size: 10.5px; color: var(--text-light); margin-top: 4px; text-align: right; }
+
+  /* Категория 3 — нет speed-bar, есть причина */
+  .blocker-block {
+    background: #F5F6FB;
+    border: 1px solid #D6DAF0;
+    border-radius: 7px;
+    padding: 10px 12px;
+    font-size: 12px;
+    color: var(--c3-text);
+    line-height: 1.5;
+  }
+  .blocker-icon { margin-right: 4px; }
+
+  /* ─── RECOMMENDATION ─── */
+  .rec-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px 28px;
+    margin-top: 48px;
+  }
+  .rec-section h2 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: var(--text);
+  }
+  .rec-section p {
+    color: var(--text-muted);
+    font-size: 13px;
+    margin-bottom: 20px;
+  }
+  .rec-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .rec-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 16px;
+    background: var(--bg);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+  .rec-rank {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+    color: white;
+  }
+  .rec-rank.r1 { background: #DC2626; }
+  .rec-rank.r2 { background: #EA580C; }
+  .rec-rank.r3 { background: #CA8A04; }
+  .rec-rank.r4 { background: #16A34A; }
+  .rec-rank.r5 { background: #2563EB; }
+  .rec-rank.r6 { background: #7C3AED; }
+
+  .rec-body { flex: 1; }
+  .rec-name { font-weight: 600; font-size: 14px; color: var(--text); }
+  .rec-cadence { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+  .rec-badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 12px;
+    white-space: nowrap;
+  }
+  .rec-badge.daily { background: #DCFCE7; color: #14532D; }
+  .rec-badge.weekly { background: #DBEAFE; color: #1E40AF; }
+  .rec-badge.trigger { background: #FEF3C7; color: #92400E; }
+
+  /* ─── FOOTER ─── */
+  .footer {
+    text-align: center;
+    padding: 32px;
+    color: var(--text-light);
+    font-size: 12px;
+    border-top: 1px solid var(--border);
+    margin-top: 40px;
+  }
+
+  @media (max-width: 640px) {
+    .header { padding: 32px 20px 28px; }
+    .header h1 { font-size: 24px; }
+    .header-stats { gap: 20px; }
+    .hstat-num { font-size: 24px; }
+    .main { padding: 24px 16px 60px; }
+    .process-grid { grid-template-columns: 1fr; }
+    .cat-title { font-size: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ─── HEADER ─── -->
+<div class="header">
+  <div class="header-inner">
+    <div class="header-tag">Activat VC · Hermes Agent</div>
+    <h1>Приоритизация автоматизации<br>бизнес-процессов</h1>
+    <div class="header-sub">40 процессов оценены по потенциалу автоматизации: сложности интеграций, зависимости от человека и ожидаемого ускорения.</div>
+    <div class="header-stats">
+      <div class="hstat">
+        <div class="hstat-num green">12</div>
+        <div class="hstat-label">Быстрые победы</div>
+      </div>
+      <div class="hstat">
+        <div class="hstat-num amber">13</div>
+        <div class="hstat-label">Средняя сложность</div>
+      </div>
+      <div class="hstat">
+        <div class="hstat-num blue">15</div>
+        <div class="hstat-label">Проблематично</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── MAIN ─── -->
+<div class="main">
+
+  <div class="legend-row">
+    <div class="legend-chip c1">
+      <div class="legend-dot c1"></div>
+      Категория 1 — Быстрые победы
+    </div>
+    <div class="legend-chip c2">
+      <div class="legend-dot c2"></div>
+      Категория 2 — Средняя сложность
+    </div>
+    <div class="legend-chip c3">
+      <div class="legend-dot c3"></div>
+      Категория 3 — Много заморочек
+    </div>
+  </div>
+
+  <!-- ═══════════════════ КАТЕГОРИЯ 1 ═══════════════════ -->
+  <div class="cat-section">
+    <div class="cat-banner c1">
+      <div class="cat-banner-header">
+        <span class="cat-num c1">Кат. 1</span>
+        <span class="cat-title c1">Быстрые победы · 12 процессов</span>
+      </div>
+      <div class="cat-desc c1">Минимум внешних интеграций, понятный результат, максимальный прирост скорости. «Собрать данные → обработать → выдать отчёт/текст». Человек тратит часы — агент минуты.</div>
+    </div>
+
+    <div class="process-grid">
+
+      <div class="pcard c1">
+        <div class="pcard-top">
+          <span class="pcard-id c1">P36</span>
+          <span class="pcard-name">Сбор отчётных данных по воронке</span>
+        </div>
+        <div class="pcard-why">Один API (Bitrix24) → отчёт. Полностью автономный процесс без ручных шагов.</div>
+        <div class="speed-block">
+          <div class="speed-row">
+            <span class="speed-before">Часы</span>
+            <span class="speed-arrow">→</span>
+            <span class="speed-after">2 мин</span>
+          </div>
+          <div class="speed-bar-wrap"><div class="speed-bar" style="width:98%"></div></div>
+          <div class="speed-label">Ускорение ×30+</div>
+        </div>
+      </div>
+
+      <div class="pcard c1">
+        <div class="pcard-top">
+          <span class="pcard-id c1">P34</span>
+          <span class="pcard-name">Мониторинг конкурентов</span>
+        </div>
+        <div class="pcard-why">Web search + суммаризация. Ежедневный дайджест без ручного поиска.</div>
+        <div class="speed-block">
+          <div class="speed-row">
+            <span class="speed-before">3–4 ч/день</span>
+            <span class="speed-arrow">→</span>
+            <span class="speed-after">5 мин</span>
+          </div>
+          <div class="speed-bar-wrap"><div class="speed-bar" style="width:97%"></div></div>
+          <div class="speed-label">Ускорение ×40+</div>
+        </div>
+      </div>
+
+      <div class="pcard c1">
+        <div class="pcard-top">
+          <span class="pcard-id c1">P27</span>
+          <span class="pcard-name">Правовой мониторинг (Adilet.kz)</span>
+        </div>
+        <div class="pcard-why">Один сайт, парсинг + Claude-анализ. Чёткий источник, чёткий результат.</div>
+        <div class="speed-block">
+          <div class="speed-row">
+            <span class="speed-before">2–3 часа</span>
+            <span class="speed-arrow">→</span>
+            <span class="speed-after">10 мин</span>
+          </div>
+          <div class="speed-bar-wrap"><div class="speed-bar" style="width:93%"></div></div>
+          <div class="speed-label">Ускорение ×15</div>
+        </div>
+      </div>
+
+      <div class="pcard c1">
+        <div class="pcard-top">
+          <span class="pcard-id c1">P35</span>
+          <span class="pcard-name">Мониторинг отклонённых стартапов</span>
+        </div>
+        <div class="pcard-why">Bitrix API + web search. Данные уже в CRM, нужна лишь переодическая проверка.</div>
+        <div class="speed-block">
+          <div class="speed-row">
+            <span class="speed-before">4–5 ч</span>
+            <span class="speed-arrow">→</span>
+            <span class="speed-after">15 мин</span>
+          </div>
+          <div class="speed-bar-wrap"><div class="speed-bar" style="width:94%"></div></div>
+          <div class="speed-label">Ускорение ×18</div>
+        </div>
+      </div>
+
+      <div class="pcard c1">
+        <div class="pcard-top">
+          <span class="pcard-id c1">P7</span>
+          <span class="pcard-name">Создание и публикация постов</span>
+        </div>
+        <div class="pcard-why">Claude генерирует + Buffer API публикует. 3 раза в неделю без ручного труда.</div>
+        <div class="speed-block">
+          <div class="speed-row">
+            <span class="speed-before">1–2 ч/пост</span>
+            <span class="speed-arrow">→</span>
+            <span class="speed-after">5 мин</span>
+          </div>
+          <div class="speed-bar-wrap"><div class="speed-bar" style="width:96%"></div></div>
+          <div class="speed-label">Ускорение ×20+</div>
+        </div>
+      </div>
+
+      <div class="pcard c1">
+        <div class="pcard-top">
+          <span class="pcard-id c1">P6</span>
+          <span class="pcard-name">Создание контент-плана</span>
+        </div>
+        <div class="pcard-why">Анализ прошлого месяца + генерация плана на следующий. Однотипная работа.</div>
+        <div class="speed-block">
+          <div class="speed-row">
+            <span class="speed-before">1 рабочий день</span>
+            <span class="speed-arrow">→</span>
+            <span class="speed-after">30 мин</span>
+          </div>
+          <div class="speed-bar-wrap"><div class="speed-bar" style="width:94%"></div></div>
+          <div class="speed-label">Ускорение ×16</div>
+        </div>
+      </div>
+
+      <div class="pcard c1">
+        <div class="pcard-top">
+          <span class="pcard-id c1">P10</span>
+          <span class="pcard-name">Скрининг заявок стартапов</span>
+        </div>
+        <div class="pcard-why">Bitrix-триггер → Claude-анализ → классификация. Ядро воронки, максимальный ROI.</div>
+        <div class="speed-block">
+          <div class="speed-row">
+            <span class="speed-before">Дни</span>
+            <span class="speed-arrow">→</span>
+            <span class="speed-after">Минуты</span>
+          </div>
+          <div class="speed-bar-wrap"><div class="speed-bar" style="width:99%"></div></div>
+          <div class="speed-label">Ускорение ×100+</div>
+        </div>
+      </div>
+
+      <div class="pcard c1">
+        <div class="pcard-top">
+          <span class="pcard-id c1">P9</span>
+          <span class="pcard-name">SEO/GEO-диагностика</span>
+        </div>
+        <div class="pcard-why">Browser-аудит + Playwright-правки. Чёткий артефакт на выходе.</div>
+        <div class="speed-block">
+          <div class="speed-row">
+            <span class="speed-before">1–2 дня</span>
+            <span class="speed-arrow">→</span>
+            <span class="speed-after">1 час</span>
+          </div>
+          <div class="speed-bar-wrap"><div class="speed-bar" style="width:92%"></div></div>
+          <div class="speed-label">Ускорение ×12</div>
+        </div>
+      </div>
+
+      <div class="pcard c1">
+        <div class="pcard-top">
+          <span class="pcard-id c1">P33</span>
+          <span class="pcard-name">Контроль лицензий и регистраций</span>
+        </div>
+        <div class="pcard-why">Простая БД дедлайнов + автоматические напоминания. Устраняет человеческое забывание.</div>
+        <div class="speed-block">
+          <div class="speed-row">
+            <span class="speed-before">Забывают</span>
+            <span class="speed-arrow">→</span>
+            <span class="speed-after">Никогда</span>
+          </div>
+          <div class="speed-bar-wrap"><div class="speed-bar" style="width:100%"></div></div>
+          <div class="speed-label">Надёжность ×∞</div>
+        </div>
+      </div>
+
+      <div class="pcard c1">
+        <div class="pcard-top">
+          <span class="pcard-id c1">P31</span>
+          <span class="pcard-name">Контроль бухучёта</span>
+        </div>
+        <div class="pcard-why">Запрос отчёта + проверка + напоминания. Аналог P33 для финансов.</div>
+        <div class="speed-block">
+          <div class="speed-row">
+            <span class="speed-before">Забывают</span>
+            <span class="speed-arrow">→</span>
+            <span class="speed-after">Автомат</span>
+          </div>
+          <div class="speed-bar-wrap"><div class="speed-bar" style="width:100%"></div></div>
+          <div class="speed-label">Надёжность ×∞</div>
+        </div>
+      </div>
+
+      <div class="pcard c1">
+        <div class="pcard-top">
+          <span class="pcard-id c1">P38</span>
+          <span class="pcard-name">Создание презентаций</span>
+        </div>
+        <div class="pcard-why">Голос/текст → PPTX. Один Claude-вызов заменяет половину рабочего дня дизайнера.</div>
+        <div class="speed-block">
+          <div class="speed-row">
+            <span class="speed-before">4–8 часов</span>
+            <span class="speed-arrow">→</span>
+            <span class="speed-after">30 мин</span>
+          </div>
+          <div class="speed-bar-wrap"><div class="speed-bar" style="width:91%"></div></div>
+          <div class="speed-label">Ускорение ×12</div>
+        </div>
+      </div>
+
+      <div class="pcard c1">
+        <div class="pcard-top">
+          <span class="pcard-id c1">P32</span>
+          <span class="pcard-name">Техническое обеспечение сайта</span>
+        </div>
+        <div class="pcard-why">Uptime-мониторинг + SSL + алерты. Переход от реактивного к проактивному.</div>
+        <div class="speed-block">
+          <div class="speed-row">
+            <span class="speed-before">Реактивно</span>
+            <span class="speed-arrow">→</span>
+            <span class="speed-after">Проактивно</span>
+          </div>
+          <div class="speed-bar-wrap"><div class="speed-bar" style="width:88%"></div></div>
+          <div class="speed-label">Надёжность ×10</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════ КАТЕГОРИЯ 2 ═══════════════════ -->
+  <div class="cat-section">
+    <div class="cat-banner c2">
+      <div class="cat-banner-header">
+        <span class="cat-num c2">Кат. 2</span>
+        <span class="cat-title c2">Средняя сложность · 13 процессов</span>
+      </div>
+      <div class="cat-desc c2">Больше интеграций (Calendly, DocuSign, email, Whisper), многоходовые цепочки. Ускорение значительное, но реализация дольше.</div>
+    </div>
+
+    <div class="process-grid">
+
+      <div class="pcard c2">
+        <div class="pcard-top">
+          <span class="pcard-id c2">P11</span>
+          <span class="pcard-name">Мониторинг стартапов (до ИК)</span>
+        </div>
+        <div class="pcard-why">Telegram-бот + анализ + SQLite. Многоэтапный, но без живых переговоров.</div>
+        <div class="speed-block">
+          <div class="speed-row">
+            <span class="speed-before">Дни</span>
+            <span class="speed-arrow">→</span>
+            <span class="speed-after">Часы</span>
+          </div>
+          <div class="speed-bar-wrap"><div class="speed-bar" style="width:80%"></div></div>
+          <div class="speed-label">Ускорение ×8</div>
+        </div>
+      </div>
+
+      <div class="pcard c2">
+        <div class="pcard-top">
+          <span class="pcard-id c2">P3</span>
+          <span class="pcard-name">Участие в чужих мероприятиях</span>
+        </div>
+        <div class="pcard-why">Web search + Whisper + Buffer. Многоэтапный пайплайн, нужна координация.</div>
+        <div class="speed-block">
+          <div class="speed-row">
+            <span class="speed-before">Недели</span>
+            <span class="speed-arrow">→</span>
+            <span class="speed-after">Дни</span>
+          </div>
+          <div class="speed-bar-wrap"><div class="speed-bar" style="width:70%"></div></div>
+          <div class="speed-label">Ускорение ×5</div>
+        </div>
+      </div>
+
+      <div class="pcard c2">
+        <div class="pcard-top">
+          <span class="pcard-id c2">P20</span>
+          <span class="pcard-name">Отчётность для инвесторов</span>
+        </div>
+        <div class="pcard-why">Browser automation + Word + BCC-рассылка. Требует точных данных и верификации.</div>
+        <div class="speed-block">
+          <div class="speed-row">
+            <span class="speed-before">Дни</span>
+            <span class="speed-arrow">→</span>
+            <span class="speed-after">Часы</span>
+          </div>
+          <div class="speed-bar-wrap"><div class="speed-bar" style="width:75%"></div></div>
+          <div class="speed-label">Ускорение ×6</div>
+        </div>
+      </div>
+
+      <div class="pcard c2">
+        <div class="pcard-top">
+          <span class="pcard-id c2">P5</span>
+          <span class="pcard-name">PR и работа со СМИ</span>
+        </div>
+        <div class="pcard-why">Web search + email-кампании + трекинг. Длинная цепочка с ожиданием ответов.</div>
+        <div class="speed-block">
+          <div class="speed-row">
+            <span class="speed-before">Недели</span>
+            <span class="speed-arrow">→</span>
+            <span class="speed-after">Дни</span>
+          </div>
+          <div class="speed-bar-wrap"><div class="speed-bar" style="width:65%"></div></div>
+          <div class="speed-label">Ускорение ×4</div>
+        </div>
+      </div>
+
+      <div class="pcard c2">
+        <div class="pcard-top">
+          <span class="pcard-id c2">P13</span>
+          <span class="pcard-name">Due Diligence стартапов</span>
+        </div>
+        <div class="pcard-why">Много источников: реестры, суды, финансы. Сложная интеграция, но высокий ROI.</div>
+        <div class="speed-block">
+          <div class="speed-row">
+            <span class="speed-before">Недели</span>
+            <span class="speed-arrow">→</span>
+            <span class="speed-after">2–3 дня</span>
+          </div>
+          <div class="speed-bar-wrap"><div class="speed-bar" style="width:78%"></div></div>
+          <div class="speed-label">Ускорение ×5</div>
+        </div>
+      </div>
+
+      <div class="pcard c2">
+        <div class="pcard-top">
+          <span class="pcard-id c2">P12</span>
+          <span class="pcard-name">Работа инвесткомитета</span>
+        </div>
+        <div class="pcard-why">Подготовка досье + координация. Агент берёт рутину, человек — решение.</div>
+        <div class="speed-block">
+          <div class="speed-row">
+            <span class="speed-before">Дни</span>
+            <span class="speed-arrow">→</span>
+            <span class="speed-after">Часы</span>
+          </div>
+          <div class="speed-bar-wrap"><div class="speed-bar" style="width:72%"></div></div>
+          <div class="speed-label">Ускорение ×5</div>
+        </div>
+      </div>
+
+      <div class="pcard c2">
+        <div class="pcard-top">
+          <span class="pcard-id c2">P15</span>
+          <span class="pcard-name">Работа с портфельными стартапами</span>
+        </div>
+        <div class="pcard-why">Calendly + Whisper + досье + маркетинг. Комплексный процесс со встречами.</div>
+        <div class="speed-block">
+          <div class="speed-row">
+            <span class="speed-before">Дни</span>
+            <span class="speed-arrow">→</span>
+            <span class="speed-after">Часы</span>
+          </div>
+          <div class="speed-bar-wrap"><div class="speed-bar" style="width:68%"></div></div>
+          <div class="speed-label">Ускорение ×4</div>
+        </div>
+      </div>
+
+      <div class="pcard c2">
+        <div class="pcard-top">
+          <span class="pcard-id c2">P28</span>
+          <span class="pcard-name">Юридическое сопровождение сделок</span>
+        </div>
+        <div class="pcard-why">Шаблоны + DocuSign + контроль. Снижает трение, но юрист всё равно нужен.</div>
+        <div class="speed-block">
+          <div class="speed-row">
+            <span class="speed-before">Дни</span>
+            <span class="speed-arrow">→</span>
+            <span class="speed-after">Часы</span>
+          </div>
+          <div class="speed-bar-wrap"><div class="speed-bar" style="width:70%"></div></div>
+          <div class="speed-label">Ускорение ×4</div>
+        </div>
+      </div>
+
+      <div class="pcard c2">
+        <div class="pcard-top">
+          <span class="pcard-id c2">P30</span>
+          <span class="pcard-name">Маркетинговая стратегия</span>
+        </div>
+        <div class="pcard-why">Квартальный анализ KPI + генерация стратегии. Нужна верификация человеком.</div>
+        <div class="speed-block">
+          <div class="speed-row">
+            <span class="speed-before">1 неделя</span>
+            <span class="speed-arrow">→</span>
+            <span class="speed-after">1–2 дня</span>
+          </div>
+          <div class="speed-bar-wrap"><div class="speed-bar" style="width:75%"></div></div>
+          <div class="speed-label">Ускорение ×5</div>
+        </div>
+      </div>
+
+      <div class="pcard c2">
+        <div class="pcard-top">
+          <span class="pcard-id c2">P19</span>
+          <span class="pcard-name">Синдикация с инвесторами клуба</span>
+        </div>
+        <div class="pcard-why">Материалы + Calendar + DocuSign. Автоматизация подготовки, переговоры — живые.</div>
+        <div class="speed-block">
+          <div class="speed-row">
+            <span class="speed-before">Недели</span>
+            <span class="speed-arrow">→</span>
+            <span class="speed-after">Дни</span>
+          </div>
+          <div class="speed-bar-wrap"><div class="speed-bar" style="width:65%"></div></div>
+          <div class="speed-label">Ускорение ×4</div>
+        </div>
+      </div>
+
+      <div class="pcard c2">
+        <div class="pcard-top">
+          <span class="pcard-id c2">P39</span>
+          <span class="pcard-name">Обновление базы VC-фондов</span>
+        </div>
+        <div class="pcard-why">Browser-проверка + обновление сайта. Рутина, но требует многих источников.</div>
+        <div class="speed-block">
+          <div class="speed-row">
+            <span class="speed-before">1 день</span>
+            <span class="speed-arrow">→</span>
+            <span class="speed-after">2 часа</span>
+          </div>
+          <div class="speed-bar-wrap"><div class="speed-bar" style="width:76%"></div></div>
+          <div class="speed-label">Ускорение ×4</div>
+        </div>
+      </div>
+
+      <div class="pcard c2">
+        <div class="pcard-top">
+          <span class="pcard-id c2">P40</span>
+          <span class="pcard-name">Обратная связь от стартаперов</span>
+        </div>
+        <div class="pcard-why">Gmail MCP + CRM + Buffer. Собираем, анализируем, публикуем — три интеграции.</div>
+        <div class="speed-block">
+          <div class="speed-row">
+            <span class="speed-before">Часы</span>
+            <span class="speed-arrow">→</span>
+            <span class="speed-after">Минуты</span>
+          </div>
+          <div class="speed-bar-wrap"><div class="speed-bar" style="width:85%"></div></div>
+          <div class="speed-label">Ускорение ×10</div>
+        </div>
+      </div>
+
+      <div class="pcard c2">
+        <div class="pcard-top">
+          <span class="pcard-id c2">P29</span>
+          <span class="pcard-name">Стратегическое планирование</span>
+        </div>
+        <div class="pcard-why">Анализ всех KPI + генерация стратегии. Тяжёлый агрегатор, но высокий ROI.</div>
+        <div class="speed-block">
+          <div class="speed-row">
+            <span class="speed-before">Недели</span>
+            <span class="speed-arrow">→</span>
+            <span class="speed-after">Дни</span>
+          </div>
+          <div class="speed-bar-wrap"><div class="speed-bar" style="width:68%"></div></div>
+          <div class="speed-label">Ускорение ×5</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════ КАТЕГОРИЯ 3 ═══════════════════ -->
+  <div class="cat-section">
+    <div class="cat-banner c3">
+      <div class="cat-banner-header">
+        <span class="cat-num c3">Кат. 3</span>
+        <span class="cat-title c3">Много заморочек, результат неясен · 15 процессов</span>
+      </div>
+      <div class="cat-desc c3">Bottleneck — живые переговоры, физические события, решения людей. Автоматизация ускоряет только подготовительную часть (10–30%).</div>
+    </div>
+
+    <div class="process-grid">
+
+      <div class="pcard c3">
+        <div class="pcard-top">
+          <span class="pcard-id c3">P2</span>
+          <span class="pcard-name">Организация собственных мероприятий</span>
+        </div>
+        <div class="blocker-block">
+          <span class="blocker-icon">⚠</span>Физическая логистика, площадки, спонсоры. 80% — живая координация, которую агент не заменит.
+        </div>
+      </div>
+
+      <div class="pcard c3">
+        <div class="pcard-top">
+          <span class="pcard-id c3">P8</span>
+          <span class="pcard-name">Таргетированная реклама</span>
+        </div>
+        <div class="blocker-block">
+          <span class="blocker-icon">⚠</span>Meta/LinkedIn Ads API меняются, нужны верифицированные аккаунты и бюджет на эксперименты.
+        </div>
+      </div>
+
+      <div class="pcard c3">
+        <div class="pcard-top">
+          <span class="pcard-id c3">P1</span>
+          <span class="pcard-name">Привлечение лидов через скаутов</span>
+        </div>
+        <div class="blocker-block">
+          <span class="blocker-icon">⚠</span>Результат полностью зависит от переговоров CEO. Агент может помочь с поиском, но не с убеждением.
+        </div>
+      </div>
+
+      <div class="pcard c3">
+        <div class="pcard-top">
+          <span class="pcard-id c3">P4</span>
+          <span class="pcard-name">Участие в акселераторах</span>
+        </div>
+        <div class="blocker-block">
+          <span class="blocker-icon">⚠</span>Зависит от ответа организаторов. Автоматизация покрывает ~20% — поиск и подготовку заявки.
+        </div>
+      </div>
+
+      <div class="pcard c3">
+        <div class="pcard-top">
+          <span class="pcard-id c3">P14</span>
+          <span class="pcard-name">Оформление инвестиционных сделок</span>
+        </div>
+        <div class="blocker-block">
+          <span class="blocker-icon">⚠</span>Юридические документы требуют живого юриста. Ошибка = потеря денег. Риск выше ROI от автоматизации.
+        </div>
+      </div>
+
+      <div class="pcard c3">
+        <div class="pcard-top">
+          <span class="pcard-id c3">P16</span>
+          <span class="pcard-name">Подготовка экзитов</span>
+        </div>
+        <div class="blocker-block">
+          <span class="blocker-icon">⚠</span>Сложнейшие переговоры + оценка компании. 90% — человеческое суждение и доверие.
+        </div>
+      </div>
+
+      <div class="pcard c3">
+        <div class="pcard-top">
+          <span class="pcard-id c3">P17</span>
+          <span class="pcard-name">Менторская программа как услуга</span>
+        </div>
+        <div class="blocker-block">
+          <span class="blocker-icon">⚠</span>По сути — вся воронка заново. Продажа услуги зависит от CEO и репутации фонда.
+        </div>
+      </div>
+
+      <div class="pcard c3">
+        <div class="pcard-top">
+          <span class="pcard-id c3">P18</span>
+          <span class="pcard-name">Формирование клуба инвесторов</span>
+        </div>
+        <div class="blocker-block">
+          <span class="blocker-icon">⚠</span>Привлечение LP — это переговоры. Агент может подготовить материалы, но не закрыть сделку.
+        </div>
+      </div>
+
+      <div class="pcard c3">
+        <div class="pcard-top">
+          <span class="pcard-id c3">P21</span>
+          <span class="pcard-name">Привлечение LP в фонд</span>
+        </div>
+        <div class="blocker-block">
+          <span class="blocker-icon">⚠</span>Фандрейзинг — самый человекозависимый процесс. Доверие строится годами, не агентами.
+        </div>
+      </div>
+
+      <div class="pcard c3">
+        <div class="pcard-top">
+          <span class="pcard-id c3">P22</span>
+          <span class="pcard-name">Управление фондами</span>
+        </div>
+        <div class="blocker-block">
+          <span class="blocker-icon">⚠</span>NAV/IRR + точные данные + аудит. Регуляторные риски делают автоматизацию опасной без верификации.
+        </div>
+      </div>
+
+      <div class="pcard c3">
+        <div class="pcard-top">
+          <span class="pcard-id c3">P23</span>
+          <span class="pcard-name">B2B партнёрства (корпорации)</span>
+        </div>
+        <div class="blocker-block">
+          <span class="blocker-icon">⚠</span>Зависит от переговоров на уровне C-level. Агент — помощник по поиску, но не переговорщик.
+        </div>
+      </div>
+
+      <div class="pcard c3">
+        <div class="pcard-top">
+          <span class="pcard-id c3">P24</span>
+          <span class="pcard-name">Отборочные мероприятия</span>
+        </div>
+        <div class="blocker-block">
+          <span class="blocker-icon">⚠</span>Физическое мероприятие + жюри. Координация людей важнее автоматизации подготовки.
+        </div>
+      </div>
+
+      <div class="pcard c3">
+        <div class="pcard-top">
+          <span class="pcard-id c3">P25</span>
+          <span class="pcard-name">HR: подбор сотрудников</span>
+        </div>
+        <div class="blocker-block">
+          <span class="blocker-icon">⚠</span>hh.kz API нестабилен, собеседования проводит CEO лично. Частота низкая — автоматизация не окупится.
+        </div>
+      </div>
+
+      <div class="pcard c3">
+        <div class="pcard-top">
+          <span class="pcard-id c3">P26</span>
+          <span class="pcard-name">HR: мониторинг удовлетворённости</span>
+        </div>
+        <div class="blocker-block">
+          <span class="blocker-icon">⚠</span>Раз в квартал, у людей мало времени на опросы. ROI автоматизации низкий при текущей команде.
+        </div>
+      </div>
+
+      <div class="pcard c3">
+        <div class="pcard-top">
+          <span class="pcard-id c3">P37</span>
+          <span class="pcard-name">Видеоконтент (локализация)</span>
+        </div>
+        <div class="blocker-block">
+          <span class="blocker-icon">⚠</span>HeyGen дорогой, разрешения авторов — ручные, качество непредсказуемо. Затраты > выгода.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════ РЕКОМЕНДАЦИЯ ═══════════════════ -->
+  <div class="rec-section">
+    <h2>Рекомендованный порядок запуска</h2>
+    <p>Из Категории 1 — первыми те, что дают ежедневную или еженедельную пользу уже с первого дня работы.</p>
+    <div class="rec-list">
+
+      <div class="rec-item">
+        <div class="rec-rank r1">1</div>
+        <div class="rec-body">
+          <div class="rec-name">P34 — Мониторинг конкурентов</div>
+          <div class="rec-cadence">Web search + суммаризация · Ускорение ×40</div>
+        </div>
+        <div class="rec-badge daily">Ежедневно</div>
+      </div>
+
+      <div class="rec-item">
+        <div class="rec-rank r2">2</div>
+        <div class="rec-body">
+          <div class="rec-name">P36 — Отчёт по воронке</div>
+          <div class="rec-cadence">Один API Bitrix24 → отчёт · Ускорение ×30</div>
+        </div>
+        <div class="rec-badge weekly">Еженедельно</div>
+      </div>
+
+      <div class="rec-item">
+        <div class="rec-rank r3">3</div>
+        <div class="rec-body">
+          <div class="rec-name">P7 — Создание и публикация постов</div>
+          <div class="rec-cadence">Claude + Buffer API · Ускорение ×20</div>
+        </div>
+        <div class="rec-badge daily">3 раза в неделю</div>
+      </div>
+
+      <div class="rec-item">
+        <div class="rec-rank r4">4</div>
+        <div class="rec-body">
+          <div class="rec-name">P10 — Скрининг заявок стартапов</div>
+          <div class="rec-cadence">Ядро воронки · Bitrix-триггер → Claude · Ускорение ×100</div>
+        </div>
+        <div class="rec-badge trigger">По поступлению</div>
+      </div>
+
+      <div class="rec-item">
+        <div class="rec-rank r5">5</div>
+        <div class="rec-body">
+          <div class="rec-name">P27 — Правовой мониторинг (Adilet.kz)</div>
+          <div class="rec-cadence">Парсинг + Claude-анализ · Ускорение ×15</div>
+        </div>
+        <div class="rec-badge weekly">Еженедельно</div>
+      </div>
+
+      <div class="rec-item">
+        <div class="rec-rank r6">6</div>
+        <div class="rec-body">
+          <div class="rec-name">P35 — Мониторинг отклонённых стартапов</div>
+          <div class="rec-cadence">Bitrix API + web search · Ускорение ×18</div>
+        </div>
+        <div class="rec-badge weekly">Еженедельно</div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  Activat VC · Hermes Agent Project · 2025
+</div>
+
+</body>
+</html>
