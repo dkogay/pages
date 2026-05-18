@@ -357,6 +357,53 @@
   .rec-badge.weekly { background: #DBEAFE; color: #1E40AF; }
   .rec-badge.trigger { background: #FEF3C7; color: #92400E; }
 
+  /* ─── DONE & PRIORITY STATES ─── */
+  .pcard.done {
+    background: #F0FDF4;
+    border-color: rgba(22, 163, 74, 0.2);
+  }
+  .pcard.done .pcard-name {
+    text-decoration: line-through;
+    color: var(--text-muted);
+    opacity: 0.75;
+  }
+  .done-badge {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    background: #DCFCE7;
+    color: #14532D;
+    font-size: 10.5px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+    border: 1px solid rgba(22, 163, 74, 0.35);
+    pointer-events: none;
+  }
+  .pcard.priority {
+    border: 2px solid #F59E0B;
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1), 0 4px 16px rgba(245, 158, 11, 0.15);
+  }
+  .priority-badge {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    background: #FEF3C7;
+    color: #92400E;
+    font-size: 10.5px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+    border: 1px solid rgba(245, 158, 11, 0.5);
+    pointer-events: none;
+  }
+
   /* ─── FOOTER ─── */
   .footer {
     text-align: center;
@@ -433,7 +480,8 @@
 
     <div class="process-grid">
 
-      <div class="pcard c1">
+      <div class="pcard c1 done">
+        <span class="done-badge">✓ Готово</span>
         <div class="pcard-top">
           <span class="pcard-id c1">P36</span>
           <span class="pcard-name">Сбор отчётных данных по воронке</span>
@@ -535,7 +583,8 @@
         </div>
       </div>
 
-      <div class="pcard c1">
+      <div class="pcard c1 done">
+        <span class="done-badge">✓ Готово</span>
         <div class="pcard-top">
           <span class="pcard-id c1">P10</span>
           <span class="pcard-name">Скрининг заявок стартапов</span>
@@ -686,7 +735,8 @@
         </div>
       </div>
 
-      <div class="pcard c2">
+      <div class="pcard c2 priority">
+        <span class="priority-badge">🔥 Приоритет</span>
         <div class="pcard-top">
           <span class="pcard-id c2">P20</span>
           <span class="pcard-name">Отчётность для инвесторов</span>
@@ -754,7 +804,8 @@
         </div>
       </div>
 
-      <div class="pcard c2">
+      <div class="pcard c2 priority">
+        <span class="priority-badge">🔥 Приоритет</span>
         <div class="pcard-top">
           <span class="pcard-id c2">P15</span>
           <span class="pcard-name">Работа с портфельными стартапами</span>
@@ -822,7 +873,8 @@
         </div>
       </div>
 
-      <div class="pcard c2">
+      <div class="pcard c2 done">
+        <span class="done-badge">✓ Готово</span>
         <div class="pcard-top">
           <span class="pcard-id c2">P39</span>
           <span class="pcard-name">Обновление базы VC-фондов</span>
