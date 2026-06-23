@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Activat VC — Стратегия (MindMap)</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#0f172a;color:#e2e8f0;overflow:hidden;user-select:none}
+#toolbar{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(15,23,42,.92);backdrop-filter:blur(12px);border-bottom:1px solid rgba(99,102,241,.2);padding:12px 24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+#toolbar h1{font-size:17px;font-weight:600;color:#a5b4fc;white-space:nowrap}
+.sep{width:1px;height:24px;background:rgba(99,102,241,.3)}
+#toolbar button{background:rgba(99,102,241,.15);border:1px solid rgba(99,102,241,.3);color:#c7d2fe;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:13px;transition:all .2s}
+#toolbar button:hover{background:rgba(99,102,241,.3);color:#fff}
+.info{margin-left:auto;font-size:12px;color:#64748b}
+canvas{display:block;cursor:grab}
+canvas:active{cursor:grabbing}
+.legend{position:fixed;bottom:16px;left:16px;z-index:100;background:rgba(15,23,42,.9);border:1px solid rgba(99,102,241,.2);border-radius:10px;padding:12px 16px;font-size:12px}
+.legend-item{display:flex;align-items:center;gap:8px;margin:4px 0}
+.legend-dot{width:12px;height:12px;border-radius:3px}
+#tooltip{position:fixed;background:rgba(30,41,59,.95);backdrop-filter:blur(8px);border:1px solid rgba(99,102,241,.4);border-radius:8px;padding:10px 14px;font-size:13px;color:#e2e8f0;max-width:420px;pointer-events:none;opacity:0;transition:opacity .15s;z-index:200;line-height:1.5}
+</style>
+</head>
+<body>
+<div id="toolbar">
+  <h1>Activat VC — Стратегия</h1>
+  <div class="sep"></div>
+  <button onclick="expandAll()">Развернуть всё</button>
+  <button onclick="collapseAll()">Свернуть всё</button>
+  <button onclick="resetView()">Сбросить вид</button>
+  <button onclick="setLevel(2)">Только цели</button>
+  <button onclick="setLevel(3)">Цели + задачи</button>
+  <button onclick="setLevel(4)">Подзадачи</button>
+  <span class="info">Колёсико — масштаб&nbsp;|&nbsp;Перетаскивание — перемещение&nbsp;|&nbsp;Клик — развернуть/свернуть</span>
+</div>
+<div id="tooltip"></div>
+<div class="legend">
+  <div style="font-weight:600;margin-bottom:6px;color:#a5b4fc;">Направления</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#5B9BD5"></div> Маркетинг и продвижение</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#70AD47"></div> Работа со стартапами</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#FFC000"></div> Работа с инвесторами</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#8B95A5"></div> Операционная деятельность</div>
+</div>
+<canvas id="c"></canvas>
+<script>
+const data={id:"root",n:"Получить прибыль в размере ____",s:"Основная цель\n1г: $230K | 2г: $433K | 3г: $637K",dir:"root",ch:[{id:"c1.1",n:"1.1. Получить прибыль на выходах из стартапов",s:"$1 200 000 (1г: $200K, 2г: $400K, 3г: $600K)",dir:"startup",ch:[{id:"z1.1.1",n:"1.1.1. Привлечь лиды от стартапов",s:"1г: 800, 2г: 1000, 3г: 1200",dir:"marketing",ch:[{id:"1_1_1_1",n:"1.1.1.1. Обеспечить SEO и GEO продвижение сайта",dir:"marketing",ch:[{id:"1_1_1_1_1",n:"1.1.1.1.1. Регулярно проводить техническую SEO и GEO оптимизацию сайта",dir:"marketing"},
+{id:"1_1_1_1_2",n:"1.1.1.1.2. Регулярно проводить контентную SEO и GEO оптимизацию сайта",dir:"marketing"}]},
+{id:"1_1_1_2",n:"1.1.1.2. Активно вести аккаунты в соцсетях (SMM)",dir:"marketing",ch:[{id:"1_1_1_2_1",n:"1.1.1.2.1. Регулярно публиковать посты в своих аккаунтах в соцсетях",dir:"marketing"},
+{id:"1_1_1_2_2",n:"1.1.1.2.2. Регулярно публиковать посты и комментарии в профильных группах",dir:"marketing"},
+{id:"1_1_1_2_3",n:"1.1.1.2.3. Поддерживать активную обратную связь с подписчиками и комментаторами",dir:"marketing"}]},
+{id:"1_1_1_3",n:"1.1.1.3. Давать таргетированную рекламу в соцсетях",dir:"marketing",ch:[{id:"1_1_1_3_1",n:"1.1.1.3.1. Определить (таргет) целевую аудиторию",dir:"marketing"},
+{id:"1_1_1_3_2",n:"1.1.1.3.2. Публиковать рекламные материалы в социальных сетях",dir:"marketing"},
+{id:"1_1_1_3_3",n:"1.1.1.3.3. Поддерживать активную обратную связь с подписчиками и комментаторами",dir:"marketing"}]},
+{id:"1_1_1_4",n:"1.1.1.4. Освещать в СМИ деятельность компании",dir:"marketing",ch:[{id:"1_1_1_4_1",n:"1.1.1.4.1. Выявить все профильные СМИ",dir:"marketing"},
+{id:"1_1_1_4_2",n:"1.1.1.4.2. Провести переговоры с профильными СМИ о публикации материалов",dir:"marketing"},
+{id:"1_1_1_4_3",n:"1.1.1.4.3. Подготовить и опубликовать тематические материалы в профильных СМИ",dir:"marketing"}]},
+{id:"1_1_1_5",n:"1.1.1.5. Организовывать тематические ивенты",dir:"marketing",ch:[{id:"1_1_1_5_1",n:"1.1.1.5.1. Разработать план ивентов на год, квартал, месяц",dir:"marketing"},
+{id:"1_1_1_5_2",n:"1.1.1.5.2. Разработать программы каждого ивента",dir:"marketing"},
+{id:"1_1_1_5_3",n:"1.1.1.5.3. Подготовить и провести ивенты",dir:"marketing"},
+{id:"1_1_1_5_4",n:"1.1.1.5.4. Освещать ивенты в СМИ и соцсетях",dir:"marketing"}]},
+{id:"1_1_1_6",n:"1.1.1.6. Принимать участие в чужих тематических ивентах",dir:"marketing",ch:[{id:"1_1_1_6_1",n:"1.1.1.6.1. Выявить все предстоящие ивенты других организаций данной отрасли",dir:"marketing"},
+{id:"1_1_1_6_2",n:"1.1.1.6.2. Провести переговоры с организаторами ивентов об участии наших сотрудников",dir:"marketing"},
+{id:"1_1_1_6_3",n:"1.1.1.6.3. Подготовить и обеспечить участие наших сотрудников в ивентах",dir:"marketing"},
+{id:"1_1_1_6_4",n:"1.1.1.6.4. Осветить участие наших сотрудников в ивентах в СМИ и соцсетях",dir:"marketing"}]},
+{id:"1_1_1_7",n:"1.1.1.7. Принять участие в качестве спикеров в акселераторах",dir:"marketing",ch:[{id:"1_1_1_7_1",n:"1.1.1.7.1. Выявить все акселераторы и их предстоящие программы",dir:"marketing"},
+{id:"1_1_1_7_2",n:"1.1.1.7.2. Провести переговоры с акселераторами об участии в качестве спикеров",dir:"marketing"},
+{id:"1_1_1_7_3",n:"1.1.1.7.3. Подготовить и обеспечить участие сотрудников в акселерационных программах",dir:"marketing"},
+{id:"1_1_1_7_4",n:"1.1.1.7.4. Осветить участие сотрудников в программах акселераторов в СМИ",dir:"marketing"}]},
+{id:"1_1_1_8",n:"1.1.1.8. Использовать услуги скаутов в привлечении лидов",dir:"marketing",ch:[{id:"1_1_1_8_1",n:"1.1.1.8.1. Найти скаутов",dir:"marketing"},
+{id:"1_1_1_8_2",n:"1.1.1.8.2. Разработать учебную программу для скаутов и разместить на сайте",dir:"marketing"},
+{id:"1_1_1_8_3",n:"1.1.1.8.3. Разместить рекламу для скаутов на целевых рынках",dir:"marketing"},
+{id:"1_1_1_8_4",n:"1.1.1.8.4. Заключить сделки со скаутами",dir:"marketing"},
+{id:"1_1_1_8_5",n:"1.1.1.8.5. Получить лиды от скаутов",dir:"marketing"}]},
+{id:"1_1_1_9",n:"1.1.1.9. Сотрудничать с корпорациями для привлечения стартапов",dir:"marketing",ch:[{id:"1_1_1_9_1",n:"1.1.1.9.1. Осуществлять поиск корпораций, представляющих интерес для стартапов",dir:"marketing"},
+{id:"1_1_1_9_2",n:"1.1.1.9.2. Предлагать корпорациям сотрудничество в вовлечении в их работу стартапов",dir:"marketing"},
+{id:"1_1_1_9_3",n:"1.1.1.9.3. Проводить отборы, питчинги и другие мероприятия для привлечения стартапов к сотрудничеству с корпорациями",dir:"marketing"},
+{id:"1_1_1_9_4",n:"1.1.1.9.4. Включать все стартапы, подавшие заявки на мероприятия с корпорациями, в базу стартапов для рассмотрения на предмет инвестирования или менторинга",dir:"marketing"}]},
+{id:"1_1_1_10",n:"1.1.1.10. Сотрудничать с госорганами для привлечения стартапов",dir:"marketing",ch:[{id:"1_1_1_10_1",n:"1.1.1.10.1. Анализировать и подбирать госорганы, представляющие интерес для стартапов и готовые к сотрудничеству с ними",dir:"marketing"},
+{id:"1_1_1_10_2",n:"1.1.1.10.2. Предлагать госорганам сотрудничество в вовлечении в их работу стартапов",dir:"marketing"},
+{id:"1_1_1_10_3",n:"1.1.1.10.3. Проводить отборы, питчинги и другие мероприятия для привлечения стартапов к сотрудничеству с госорганами",dir:"marketing"},
+{id:"1_1_1_10_4",n:"1.1.1.10.4. Включать все стартапы, подавшие заявки на мероприятия с госорганами, в базу стартапов для рассмотрения на предмет инвестирования или менторинга",dir:"marketing"}]},
+{id:"1_1_1_11",n:"1.1.1.11. Искать стартапы в открытых источниках",dir:"marketing",ch:[{id:"1_1_1_11_1",n:"1.1.1.11.1. Осуществлять мониторинг открытых источников информации и находить упоминания о стартапах, подпадающих под наши критерии отбора и отсутствующие в нашей базе данных",dir:"marketing"},
+{id:"1_1_1_11_2",n:"1.1.1.11.2. Находить контактные данные таких стартапов",dir:"marketing"},
+{id:"1_1_1_11_3",n:"1.1.1.11.3. Направлять указанным стартапам приглашение подать заявку к нам для получения инвестиций или менторинга",dir:"marketing"}]}]},
+{id:"z1.1.2",n:"1.1.2. Отсеять нерелевантные заявки",s:"1г: 125, 2г: 150, 3г: 175",dir:"startup",ch:[{id:"b1",n:"1.1.2.1. Проанализировать поступившие заявки",dir:"startup"},
+{id:"b2",n:"1.1.2.2. Написать письма с отказом нерелевантным заявителям",dir:"startup"},
+{id:"b3",n:"1.1.2.3. Передать релевантные заявки на Due diligence",dir:"startup"}]},
+{id:"z1.1.3",n:"1.1.3. Провести Due dilligence релевантных заявок",s:"1г: 40, 2г: 50, 3г: 60",dir:"startup",ch:[{id:"b4",n:"1.1.3.1. Провести Due dilligence поступивших заявок и принять по ним решение",dir:"startup"},
+{id:"b5",n:"1.1.3.2. Отправить письма с соответствующим предложением или отказом заявителям",dir:"startup"}]},
+{id:"z1.1.4",n:"1.1.4. Войти в стартапы",s:"1г: 8, 2г: 10, 3г: 12",dir:"startup",ch:[{id:"b7",n:"1.1.4.1. Заключить договора со стартапами об инвестировании или менторинге",dir:"startup"},
+{id:"b8",n:"1.1.4.2. Перечислить деньги в стартапы (при инвестировании деньгами)",dir:"startup"},
+{id:"b8a",n:"1.1.4.3. Провести церемонию онбординга стартапов (онлайн или оффлайн)",dir:"startup"},
+{id:"b8b",n:"1.1.4.4. Внести стартапы в список портфельных стартапов на сайте компании",dir:"startup"},
+{id:"b8c",n:"1.1.4.5. Осветить в медиа новость о вхождении компании в стартапы",dir:"startup"}]},
+{id:"z1.1.5",n:"1.1.5. Провести менторское обучение и сопровождение портфельных стартапов",s:"1г: 8, 2г: 10, 3г: 12",dir:"startup",ch:[{id:"b9",n:"1.1.5.1. Разработать и регулярно обновлять Менторскую программу",dir:"startup"},
+{id:"b10",n:"1.1.5.2. Провести менторское обучение портфельных стартапов",dir:"startup"},
+{id:"b11",n:"1.1.5.3. Оказывать содействие портфельным стартапам в их развитии путём участия в мозговых штурмах, знакомства их с потенциальными клиентами и инвесторами",dir:"startup"}]},
+{id:"z1.1.6",n:"1.1.6. Продать долю в стартапе с получением прибыли",s:"1г: $200K, 2г: $400K, 3г: $600K",dir:"startup",ch:[{id:"b12",n:"1.1.6.1. Выявить всех потенциальных покупателей стартапа или нашей доли",dir:"investor"},
+{id:"b13",n:"1.1.6.2. Сформировать предложение и донести до всех потенциальных покупателей",dir:"startup"},
+{id:"b14",n:"1.1.6.3. Провести переговоры между всеми заинтересованными сторонами",dir:"investor"},
+{id:"b15",n:"1.1.6.4. Совершить сделки по продаже стартапов или нашей доли",dir:"startup"}]}]},
+{id:"c2",n:"2. Получить прибыль от инвесторов",dir:"investor",ch:[{id:"c2.1",n:"2.1. Получить прибыль от организации синдикатов",s:"$75 000 (по $25K/год)",dir:"investor",ch:[{id:"z2.1.1",n:"2.1.1. Сформировать Клуб инвесторов",dir:"investor",ch:[{id:"2_1_1_1",n:"2.1.1.1. Обеспечить SEO и GEO продвижение сайта",dir:"marketing",ch:[{id:"2_1_1_1_1",n:"2.1.1.1.1. Регулярно проводить техническую SEO и GEO оптимизацию сайта",dir:"marketing"},
+{id:"2_1_1_1_2",n:"2.1.1.1.2. Регулярно проводить контентную SEO и GEO оптимизацию сайта",dir:"marketing"}]},
+{id:"2_1_1_2",n:"2.1.1.2. Активно вести аккаунты в соцсетях (SMM)",dir:"marketing",ch:[{id:"2_1_1_2_1",n:"2.1.1.2.1. Регулярно публиковать посты в своих аккаунтах в соцсетях",dir:"marketing"},
+{id:"2_1_1_2_2",n:"2.1.1.2.2. Регулярно публиковать посты и комментарии в профильных группах",dir:"marketing"},
+{id:"2_1_1_2_3",n:"2.1.1.2.3. Поддерживать активную обратную связь с подписчиками и комментаторами",dir:"marketing"}]},
+{id:"2_1_1_3",n:"2.1.1.3. Давать таргетированную рекламу в соцсетях",dir:"marketing",ch:[{id:"2_1_1_3_1",n:"2.1.1.3.1. Определить (таргет) целевую аудиторию среди инвесторов",dir:"marketing"},
+{id:"2_1_1_3_2",n:"2.1.1.3.2. Публиковать рекламные материалы в социальных сетях",dir:"marketing"},
+{id:"2_1_1_3_3",n:"2.1.1.3.3. Поддерживать активную обратную связь с подписчиками и комментаторами",dir:"marketing"}]},
+{id:"2_1_1_4",n:"2.1.1.4. Освещать в СМИ деятельность компании",dir:"marketing",ch:[{id:"2_1_1_4_1",n:"2.1.1.4.1. Выявить все профильные СМИ",dir:"marketing"},
+{id:"2_1_1_4_2",n:"2.1.1.4.2. Провести переговоры с профильными СМИ о публикации материалов",dir:"marketing"},
+{id:"2_1_1_4_3",n:"2.1.1.4.3. Подготовить и опубликовать тематические материалы в профильных СМИ",dir:"marketing"}]},
+{id:"2_1_1_5",n:"2.1.1.5. Организовывать тематические ивенты для инвесторов",dir:"marketing",ch:[{id:"2_1_1_5_1",n:"2.1.1.5.1. Разработать план ивентов на год, квартал, месяц",dir:"marketing"},
+{id:"2_1_1_5_2",n:"2.1.1.5.2. Разработать программы каждого ивента",dir:"marketing"},
+{id:"2_1_1_5_3",n:"2.1.1.5.3. Подготовить и провести ивенты",dir:"marketing"},
+{id:"2_1_1_5_4",n:"2.1.1.5.4. Освещать ивенты в СМИ и соцсетях",dir:"marketing"}]},
+{id:"2_1_1_6",n:"2.1.1.6. Принимать участие в чужих тематических ивентах для привлечения инвесторов",dir:"marketing",ch:[{id:"2_1_1_6_1",n:"2.1.1.6.1. Выявить все предстоящие ивенты других организаций данной отрасли",dir:"marketing"},
+{id:"2_1_1_6_2",n:"2.1.1.6.2. Провести переговоры с организаторами ивентов об участии наших сотрудников",dir:"marketing"},
+{id:"2_1_1_6_3",n:"2.1.1.6.3. Подготовить и обеспечить участие наших сотрудников в ивентах",dir:"marketing"},
+{id:"2_1_1_6_4",n:"2.1.1.6.4. Осветить участие наших сотрудников в ивентах в СМИ и соцсетях",dir:"marketing"}]},
+{id:"2_1_1_7",n:"2.1.1.7. Использовать услуги скаутов в привлечении инвесторов",dir:"marketing",ch:[{id:"2_1_1_7_1",n:"2.1.1.7.1. Найти скаутов",dir:"marketing"},
+{id:"2_1_1_7_2",n:"2.1.1.7.2. Разработать учебную программу для скаутов и разместить на сайте",dir:"marketing"},
+{id:"2_1_1_7_3",n:"2.1.1.7.3. Разместить рекламу для скаутов на целевых рынках",dir:"marketing"},
+{id:"2_1_1_7_4",n:"2.1.1.7.4. Заключить сделки со скаутами",dir:"marketing"},
+{id:"2_1_1_7_5",n:"2.1.1.7.5. Получить лиды от скаутов",dir:"marketing"}]},
+{id:"2_1_1_8",n:"2.1.1.8. Искать инвесторов в открытых источниках",dir:"marketing",ch:[{id:"2_1_1_8_1",n:"2.1.1.8.1. Осуществлять мониторинг открытых источников информации и находить упоминания об инвесторах, подпадающих под наши критерии отбора и отсутствующих в нашей базе данных",dir:"marketing"},
+{id:"2_1_1_8_2",n:"2.1.1.8.2. Находить контактные данные таких инвесторов",dir:"marketing"},
+{id:"2_1_1_8_3",n:"2.1.1.8.3. Направлять указанным инвесторам приглашение вступить в Клуб инвесторов",dir:"marketing"}]}]},
+{id:"z2.1.2",n:"2.1.2. Поддерживать деятельность Клуба инвесторов",dir:"investor",ch:[{id:"2_1_2_1",n:"2.1.2.1. Проводить обучение инвесторов",dir:"investor",ch:[{id:"2_1_2_1_1",n:"2.1.2.1.1. Создать Учебную программу для инвесторов",dir:"investor",ch:[{id:"2_1_2_1_1_1",n:"2.1.2.1.1.1. Разработать Программу",dir:"investor"},
+{id:"2_1_2_1_1_2",n:"2.1.2.1.1.2. Подготовить материалы специалистами",dir:"investor"},
+{id:"2_1_2_1_1_3",n:"2.1.2.1.1.3. Записать материалы в видео-, аудио- и текстовом формате",dir:"investor"},
+{id:"2_1_2_1_1_4",n:"2.1.2.1.1.4. Залить материалы на сайт",dir:"investor"}]},
+{id:"2_1_2_1_2",n:"2.1.2.1.2. Проводить обучающие мероприятия для инвесторов",dir:"marketing",ch:[{id:"2_1_2_1_2_1",n:"2.1.2.1.2.1. Разработать план обучающих мероприятий на год, квартал, месяц",dir:"marketing"},
+{id:"2_1_2_1_2_2",n:"2.1.2.1.2.2. Разработать программы каждого обучающего мероприятия",dir:"marketing"},
+{id:"2_1_2_1_2_3",n:"2.1.2.1.2.3. Подготовить и провести обучающие мероприятия",dir:"marketing"},
+{id:"2_1_2_1_2_4",n:"2.1.2.1.2.4. Освещать обучающие мероприятия в СМИ и соцсетях",dir:"marketing"}]}]},
+{id:"2_1_2_2",n:"2.1.2.2. Поддерживать осведомлённость инвесторов о венчурном рынке",dir:"investor",ch:[{id:"2_1_2_2_1",n:"2.1.2.2.1. Регулярно находить новости венчурной индустрии",dir:"investor"},
+{id:"2_1_2_2_2",n:"2.1.2.2.2. Регулярно публиковать новости венчурной индустрии в чате Клуба инвесторов",dir:"investor"}]}]},
+{id:"z2.1.3",n:"2.1.3. Совершить синдикатные сделки с получением прибыли",s:"$75K (по $25K/год)",dir:"investor",ch:[{id:"z2.1.3.1",n:"2.1.3.1. Внести предложения по инвестированию",dir:"investor",ch:[{id:"f1",n:"2.1.3.1.1. Обговорить со стартаперами условия будущих синдицированных сделок",dir:"startup"},
+{id:"f2",n:"2.1.3.1.2. Подготовить презентации стартапов",dir:"startup"},
+{id:"f3",n:"2.1.3.1.3. Внести предложения по инвестированию",dir:"investor"}]},
+{id:"f4",n:"2.1.3.2. Выявить всех потенциальных соинвесторов",dir:"investor"},
+{id:"f5",n:"2.1.3.3. Провести переговоры между всеми заинтересованными сторонами",dir:"investor"},
+{id:"f6",n:"2.1.3.4. Совершить синдикатные сделки с получением прибыли",dir:"investor"}]}]},
+{id:"c2.2",n:"2.2. Получить прибыль от управления капиталом",dir:"investor",ch:[{id:"z2.2.1",n:"2.2.1. Получить прибыль от управления собственным венчурным инвестиционным фондом",dir:"investor",ch:[{id:"z2.2.1.1",n:"2.2.1.1. Зарегистрировать Фонд в одной из юрисдикций (МФЦА или Делавэре)",dir:"investor"},
+{id:"z2.2.1.2",n:"2.2.1.2. Привлечь в фонд LP и сформировать Фонд",dir:"investor",ch:[{id:"z2.2.1.2.1",n:"2.2.1.2.1. Привлечь казахстанских институциональных инвесторов в качестве LP в Фонд",dir:"investor",ch:[{id:"z2.2.1.2.1.1",n:"2.2.1.2.1.1. Выявить всех существующих казахстанских институциональных инвесторов",dir:"investor"},
+{id:"z2.2.1.2.1.2",n:"2.2.1.2.1.2. Вступить в контакт с выявленными казахстанскими институциональными инвесторами и провести переговоры",dir:"investor"},
+{id:"z2.2.1.2.1.3",n:"2.2.1.2.1.3. Заключить договор на управление деньгами казахстанских институциональных инвесторов",dir:"investor"},
+{id:"z2.2.1.2.1.4",n:"2.2.1.2.1.4. Получить деньги от казахстанских институциональных инвесторов в Фонд",dir:"investor"}]},
+{id:"z2.2.1.2.2",n:"2.2.1.2.2. Привлечь международных институциональных инвесторов в качестве LP в Фонд",dir:"investor",ch:[{id:"z2.2.1.2.2.1",n:"2.2.1.2.2.1. Выявить всех существующих международных институциональных инвесторов",dir:"investor"},
+{id:"z2.2.1.2.2.2",n:"2.2.1.2.2.2. Вступить в контакт с выявленными международными институциональными инвесторами и провести переговоры",dir:"investor"},
+{id:"z2.2.1.2.2.3",n:"2.2.1.2.2.3. Заключить договор на управление деньгами международных институциональных инвесторов",dir:"investor"},
+{id:"z2.2.1.2.2.4",n:"2.2.1.2.2.4. Получить деньги от международных институциональных инвесторов в Фонд",dir:"investor"}]},
+{id:"z2.2.1.2.3",n:"2.2.1.2.3. Привлечь корпорации в качестве LP в Фонд",dir:"investor",ch:[{id:"z2.2.1.2.3.1",n:"2.2.1.2.3.1. Выявить все существующие корпорации, потенциально заинтересованные в участии в Фонде",dir:"investor"},
+{id:"z2.2.1.2.3.2",n:"2.2.1.2.3.2. Вступить в контакт с выявленными корпорациями и провести переговоры",dir:"investor"},
+{id:"z2.2.1.2.3.3",n:"2.2.1.2.3.3. Заключить договор на управление деньгами корпораций",dir:"investor"},
+{id:"z2.2.1.2.3.4",n:"2.2.1.2.3.4. Получить деньги от корпораций в Фонд",dir:"investor"}]},
+{id:"z2.2.1.2.4",n:"2.2.1.2.4. Привлечь семейные офисы в качестве LP в Фонд",dir:"investor",ch:[{id:"z2.2.1.2.4.1",n:"2.2.1.2.4.1. Выявить все существующие семейные офисы, потенциально заинтересованные в участии в Фонде",dir:"investor"},
+{id:"z2.2.1.2.4.2",n:"2.2.1.2.4.2. Вступить в контакт с выявленными семейными офисами и провести переговоры",dir:"investor"},
+{id:"z2.2.1.2.4.3",n:"2.2.1.2.4.3. Заключить договор на управление деньгами семейных офисов",dir:"investor"},
+{id:"z2.2.1.2.4.4",n:"2.2.1.2.4.4. Получить деньги от семейных офисов в Фонд",dir:"investor"}]},
+{id:"z2.2.1.2.5",n:"2.2.1.2.5. Привлечь HNWI в качестве LP в Фонд",dir:"investor",ch:[{id:"z2.2.1.2.5.1",n:"2.2.1.2.5.1. Выявить всех существующих HNWI, потенциально заинтересованных в участии в Фонде",dir:"investor"},
+{id:"z2.2.1.2.5.2",n:"2.2.1.2.5.2. Вступить в контакт с выявленными HNWI и провести переговоры",dir:"investor"},
+{id:"z2.2.1.2.5.3",n:"2.2.1.2.5.3. Заключить договор на управление деньгами HNWI",dir:"investor"},
+{id:"z2.2.1.2.5.4",n:"2.2.1.2.5.4. Получить деньги от HNWI в Фонд",dir:"investor"}]}]},
+{id:"z2.2.1.3",n:"2.2.1.3. Проинвестировать стартапы (отсылка к Задаче 1.1.)",dir:"startup"},
+{id:"z2.2.1.4",n:"2.2.1.4. Осуществить экзиты из стартапов (отсылка к Задаче 1.1.6.)",dir:"startup"},
+{id:"z2.2.1.5",n:"2.2.1.5. Распределить прибыль между LP и управляющей компанией",dir:"investor"},
+{id:"z2.2.1.6",n:"2.2.1.6. Ликвидировать Фонд",dir:"investor"}]},
+{id:"z2.2.2",n:"2.2.2. Получить прибыль от управления корпоративным венчурным фондом",dir:"investor",ch:[{id:"z2.2.2.1",n:"2.2.2.1. Найти корпорации, которые имеют или готовы создать корпоративный венчурный фонд",dir:"investor"},
+{id:"z2.2.2.2",n:"2.2.2.2. Заключить с Корпорацией договор управления Фондом",dir:"investor"},
+{id:"z2.2.2.3",n:"2.2.2.3. Проинвестировать стартапы (отсылка к Задаче 1.1.)",dir:"startup"},
+{id:"z2.2.2.4",n:"2.2.2.4. Осуществить экзиты из стартапов (отсылка к Задаче 1.1.6.)",dir:"startup"},
+{id:"z2.2.2.5",n:"2.2.2.5. Распределить прибыль между Корпорацией и управляющей компанией",dir:"investor"},
+{id:"z2.2.2.6",n:"2.2.2.6. Ликвидировать Фонд",dir:"investor"}]},
+{id:"z2.2.3",n:"2.2.3. Получить прибыль от управления деньгами семейных офисов",dir:"investor",ch:[{id:"z2.2.3.1",n:"2.2.3.1. Найти семейные офисы, которые готовы передать деньги в управление",dir:"investor"},
+{id:"z2.2.3.2",n:"2.2.3.2. Заключить с семейными офисами договор управления деньгами",dir:"investor"},
+{id:"z2.2.3.3",n:"2.2.3.3. Проинвестировать стартапы (отсылка к Задаче 1.1.)",dir:"startup"},
+{id:"z2.2.3.4",n:"2.2.3.4. Осуществить экзиты из стартапов (отсылка к Задаче 1.1.6.)",dir:"startup"},
+{id:"z2.2.3.5",n:"2.2.3.5. Распределить прибыль между семейными офисами и управляющей компанией",dir:"investor"},
+{id:"z2.2.3.6",n:"2.2.3.6. Расторгнуть договор управления деньгами",dir:"investor"}]}]}]},
+{id:"c3",n:"3. Обеспечить бесперебойную жизнедеятельность компании",dir:"ops",ch:[{id:"z3.1",n:"3.1. Организовать кадровое обеспечение компании",dir:"ops",ch:[{id:"g1",n:"3.1.1. Организовать приём на работу сотрудников с длительностью вакансии не более 1 месяца",dir:"ops"},
+{id:"g2",n:"3.1.2. Организовать деятельность сотрудников в компании с текучестью не более 10% в год",dir:"ops"},
+{id:"g3",n:"3.1.3. Организовать увольнение сотрудников с уровнем удовлетворённости не менее 70%",dir:"ops"}]},
+{id:"z3.2",n:"3.2. Организовать правовое обеспечение деятельности компании",dir:"ops",ch:[{id:"g4",n:"3.2.1. Обеспечить ведение дел с не более одной претензии в год",dir:"ops"},
+{id:"g5",n:"3.2.2. Обеспечить ведение дел с не более одного судебного разбирательства в год",dir:"ops"},
+{id:"g6",n:"3.2.3. Обеспечить ведение дел с контролем правовых рисков",dir:"ops"}]},
+{id:"z3.3",n:"3.3. Обеспечить финансовое планирование деятельности компании",dir:"ops",ch:[{id:"g7",n:"3.3.1. Разрабатывать финансовый план компании на год, квартал, месяц",dir:"ops"},
+{id:"g8",n:"3.3.2. Производить мониторинг и контроль над исполнением финансового плана",dir:"ops"},
+{id:"g9",n:"3.3.3. Своевременно вносить изменения в финансовый план компании",dir:"ops"},
+{id:"g10",n:"3.3.4. Вносить предложения по улучшению планирования и исполнения финансового плана",dir:"ops"}]},
+{id:"z3.4",n:"3.4. Обеспечить ведение бухгалтерского учёта в компании",dir:"ops",ch:[{id:"g11",n:"3.4.1. Своевременно и правильно проводить финансовые операции компании",dir:"ops"},
+{id:"g12",n:"3.4.2. Организовать ведение бухгалтерского учёта в отличном состоянии",dir:"ops"},
+{id:"g13",n:"3.4.3. Организовать ведение налогового учёта без претензий от налоговых органов",dir:"ops"}]},
+{id:"z3.5",n:"3.5. Обеспечить техническое функционирование работы компании",dir:"ops",ch:[{id:"g14",n:"3.5.1. Обеспечить высокий уровень UX/UI сайта с удовлетворённостью не ниже 80%",dir:"ops"},
+{id:"g15",n:"3.5.2. Обеспечить владение доменными именами без просрочки оплаты",dir:"ops"},
+{id:"g16",n:"3.5.3. Обеспечить хостинг сайта без сбоев более 10 часов в год",dir:"ops"},
+{id:"g17",n:"3.5.4. Обеспечить безопасность сайта от сторонних программ",dir:"ops"},
+{id:"g18",n:"3.5.5. Обеспечить сохранность кода сайта с копированием не реже раза в месяц",dir:"ops"}]},
+{id:"z3.6",n:"3.6. Решать организационные вопросы деятельности компании",dir:"ops",ch:[{id:"g19",n:"3.6.1. Обеспечить правовую легальность деятельности компании",dir:"ops"},
+{id:"g20",n:"3.6.2. Обеспечить бренд компании (имя, логотип, слоган)",dir:"ops"},
+{id:"g21",n:"3.6.3. Обеспечить рабочий процесс в компании с удовлетворённостью персонала",dir:"ops"}]}]}]};
+
+// Colors by work direction (from PPTX)
+const DIR_COLORS={
+  root:     {bg:"#4a5568",bd:"#a0aec0",lk:"rgba(74,85,104,.45)"},
+  marketing:{bg:"#5B9BD5",bd:"#8BB8E8",lk:"rgba(91,155,213,.4)"},
+  startup:  {bg:"#70AD47",bd:"#95C96E",lk:"rgba(112,173,71,.4)"},
+  analyst:  {bg:"#ED7D31",bd:"#F2A165",lk:"rgba(237,125,49,.4)"},
+  investor: {bg:"#FFC000",bd:"#FFD24D",lk:"rgba(255,192,0,.4)",tx:"#3a2800"},
+  ops:      {bg:"#8B95A5",bd:"#B0B8C5",lk:"rgba(139,149,165,.4)"}
+};
+function gc(d,nd){return DIR_COLORS[nd&&nd.dir||"root"]||DIR_COLORS.root}
+
+// Flatten tree with layout
+const NODES=[];const EDGES=[];
+function buildFlat(node,depth,parent){
+  const nd={...node,depth,parent:parent?parent.id:null,children_ids:(node.ch||[]).map(c=>c.id),collapsed:depth>=3&&!!(node.ch&&node.ch.length),visible:true,x:0,y:0,w:0,h:0};
+  NODES.push(nd);
+  if(node.ch)node.ch.forEach(c=>{EDGES.push({from:node.id,to:c.id});buildFlat(c,depth+1,node)});
+}
+buildFlat(data,0,null);
+
+function getNode(id){return NODES.find(n=>n.id===id)}
+
+function isVisible(nd){
+  if(!nd)return false;
+  let cur=nd;
+  while(cur.parent){
+    const p=getNode(cur.parent);
+    if(!p)return false;
+    if(p.collapsed)return false;
+    cur=p;
+  }
+  return true;
+}
+
+// Layout: horizontal tree
+function layout(){
+  // Mark visibility
+  NODES.forEach(nd=>{nd.visible=isVisible(nd)});
+
+  // Measure text
+  const ctx=canvas.getContext("2d");
+  NODES.forEach(nd=>{
+    const fs=nd.depth===0?14:nd.depth<=2?12:11;
+    ctx.font=(nd.depth<=2?"600 ":"400 ")+fs+"px 'Segoe UI',system-ui,sans-serif";
+    const lines=wrapText(nd.n,nd.depth===0?28:36,ctx);
+    nd._lines=lines;
+    const maxW=Math.max(...lines.map(l=>ctx.measureText(l).width));
+    nd.w=Math.max(maxW+24,80);
+    nd.h=lines.length*18+16;
+  });
+
+  // Assign y positions (horizontal tree: x = depth * spacing)
+  const HGAP=280;
+  const VGAP=8;
+
+  // Position leaves first, then bubble up
+  function positionSubtree(id){
+    const nd=getNode(id);
+    if(!nd||!nd.visible)return{min:0,max:0,h:0};
+
+    nd.x=nd.depth*HGAP;
+
+    const visibleChildren=nd.children_ids.filter(cid=>{const c=getNode(cid);return c&&c.visible&&!getNode(nd.id).collapsed});
+
+    if(visibleChildren.length===0){
+      nd.h_total=nd.h;
+      return{min:0,max:nd.h,h:nd.h};
+    }
+
+    let totalH=0;
+    const childResults=[];
+    visibleChildren.forEach((cid,i)=>{
+      const res=positionSubtree(cid);
+      childResults.push(res);
+      totalH+=res.h;
+      if(i>0)totalH+=VGAP;
+    });
+
+    // Position children
+    let cy=-totalH/2;
+    visibleChildren.forEach((cid,i)=>{
+      const c=getNode(cid);
+      const res=childResults[i];
+      c.y+=cy+res.h/2;
+      cy+=res.h+VGAP;
+    });
+
+    nd.h_total=Math.max(totalH,nd.h);
+    return{min:-totalH/2,max:totalH/2,h:nd.h_total};
+  }
+
+  // Reset y
+  NODES.forEach(nd=>{nd.y=0});
+  positionSubtree("root");
+
+  // Propagate y offsets
+  function propagateY(id,offsetY){
+    const nd=getNode(id);
+    if(!nd||!nd.visible)return;
+    nd.y+=offsetY;
+    if(!nd.collapsed){
+      nd.children_ids.forEach(cid=>propagateY(cid,nd.y));
+    }
+  }
+  propagateY("root",0);
+}
+
+function wrapText(text,maxChars,ctx){
+  if(!ctx){return text.length<=maxChars?[text]:[text.substring(0,maxChars-1)+"…"]}
+  const words=text.split(" ");
+  const lines=[];let line="";
+  for(const w of words){
+    const test=(line?line+" ":"")+w;
+    if(test.length>maxChars&&line){lines.push(line);line=w}
+    else line=test;
+  }
+  if(line)lines.push(line);
+  return lines;
+}
+
+// Canvas rendering
+const canvas=document.getElementById("c");
+const dpr=window.devicePixelRatio||1;
+let W,H;
+let panX=0,panY=0,scale=1;
+
+function resize(){
+  W=window.innerWidth;H=window.innerHeight;
+  canvas.width=W*dpr;canvas.height=H*dpr;
+  canvas.style.width=W+"px";canvas.style.height=H+"px";
+  draw();
+}
+
+function draw(){
+  layout();
+  const ctx=canvas.getContext("2d");
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.clearRect(0,0,W,H);
+  ctx.save();
+  ctx.translate(panX,panY+H/2+24);
+  ctx.scale(scale,scale);
+
+  // Draw edges
+  EDGES.forEach(e=>{
+    const from=getNode(e.from),to=getNode(e.to);
+    if(!from||!to||!from.visible||!to.visible)return;
+    if(from.collapsed)return;
+    const c=gc(to.depth,to);
+    ctx.strokeStyle=c.lk;
+    ctx.lineWidth=1.5;
+    ctx.beginPath();
+    const x1=from.x+from.w/2,y1=from.y;
+    const x2=to.x-to.w/2,y2=to.y;
+    const mx=(x1+x2)/2;
+    ctx.moveTo(x1,y1);
+    ctx.bezierCurveTo(mx,y1,mx,y2,x2,y2);
+    ctx.stroke();
+  });
+
+  // Draw nodes
+  NODES.forEach(nd=>{
+    if(!nd.visible)return;
+    const c=gc(nd.depth,nd);
+    const rx=nd.x-nd.w/2,ry=nd.y-nd.h/2;
+
+    // Shadow
+    ctx.shadowColor="rgba(0,0,0,.3)";ctx.shadowBlur=8;ctx.shadowOffsetY=2;
+
+    // Rect
+    roundRect(ctx,rx,ry,nd.w,nd.h,6);
+    ctx.fillStyle=c.bg;ctx.fill();
+    ctx.shadowColor="transparent";
+    ctx.strokeStyle=c.bd;ctx.lineWidth=1.2;ctx.stroke();
+
+    // Text
+    const fs=nd.depth===0?14:nd.depth<=2?12:11;
+    ctx.font=(nd.depth<=2?"600 ":"400 ")+fs+"px 'Segoe UI',system-ui,sans-serif";
+    ctx.fillStyle=c.tx||"#fff";ctx.textAlign="center";ctx.textBaseline="middle";
+    const lines=nd._lines||[nd.n];
+    const lh=18;
+    const startY=nd.y-(lines.length-1)*lh/2;
+    lines.forEach((line,i)=>{ctx.fillText(line,nd.x,startY+i*lh)});
+
+    // Toggle button
+    const hasKids=nd.children_ids.length>0;
+    if(hasKids){
+      const bx=nd.x+nd.w/2+14,by=nd.y;
+      ctx.beginPath();ctx.arc(bx,by,9,0,Math.PI*2);
+      ctx.fillStyle=nd.collapsed?c.bg:"rgba(255,255,255,.12)";ctx.fill();
+      ctx.strokeStyle=c.tx?"rgba(0,0,0,.4)":"rgba(255,255,255,.5)";ctx.lineWidth=1.2;ctx.stroke();
+      ctx.fillStyle=c.tx||"#fff";ctx.font="bold 12px sans-serif";ctx.textAlign="center";ctx.textBaseline="middle";
+      ctx.fillText(nd.collapsed?"+":"−",bx,by+1);
+    }
+  });
+
+  ctx.restore();
+}
+
+function roundRect(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();
+}
+
+// Interaction
+let dragging=false,lastMX,lastMY;
+const tooltipEl=document.getElementById("tooltip");
+
+canvas.addEventListener("mousedown",e=>{dragging=true;lastMX=e.clientX;lastMY=e.clientY});
+window.addEventListener("mouseup",()=>dragging=false);
+window.addEventListener("mousemove",e=>{
+  if(dragging){panX+=e.clientX-lastMX;panY+=e.clientY-lastMY;lastMX=e.clientX;lastMY=e.clientY;draw();return}
+  // Tooltip
+  const mx=(e.clientX-panX)/scale,my=(e.clientY-panY-H/2-24)/scale;
+  let found=null;
+  for(const nd of NODES){
+    if(!nd.visible)continue;
+    if(mx>=nd.x-nd.w/2&&mx<=nd.x+nd.w/2&&my>=nd.y-nd.h/2&&my<=nd.y+nd.h/2){found=nd;break}
+  }
+  if(found&&found.s){
+    tooltipEl.innerHTML="<strong>"+found.n+"</strong><br>"+found.s;
+    tooltipEl.style.opacity=1;tooltipEl.style.left=(e.clientX+16)+"px";tooltipEl.style.top=(e.clientY-8)+"px";
+  } else {
+    tooltipEl.style.opacity=0;
+  }
+});
+
+canvas.addEventListener("wheel",e=>{
+  e.preventDefault();
+  // Smooth zoom: scale step by actual deltaY magnitude (trackpad-friendly)
+  const raw=e.deltaY;
+  const step=Math.min(Math.abs(raw),100)/100*0.06;
+  const zf=raw>0?1-step:1+step;
+  const mx=e.clientX,my=e.clientY;
+  panX=mx-(mx-panX)*zf;
+  panY=my-(my-panY)*zf;
+  scale*=zf;
+  scale=Math.max(0.08,Math.min(3,scale));
+  draw();
+},{passive:false});
+
+canvas.addEventListener("click",e=>{
+  const mx=(e.clientX-panX)/scale,my=(e.clientY-panY-H/2-24)/scale;
+  for(const nd of NODES){
+    if(!nd.visible||!nd.children_ids.length)continue;
+    // Check toggle button
+    const bx=nd.x+nd.w/2+14,by=nd.y;
+    if(Math.hypot(mx-bx,my-by)<14){nd.collapsed=!nd.collapsed;draw();return}
+    // Check node rect
+    if(mx>=nd.x-nd.w/2&&mx<=nd.x+nd.w/2&&my>=nd.y-nd.h/2&&my<=nd.y+nd.h/2){
+      nd.collapsed=!nd.collapsed;draw();return;
+    }
+  }
+});
+
+canvas.addEventListener("dblclick",e=>{e.preventDefault()});
+
+function expandAll(){NODES.forEach(nd=>nd.collapsed=false);draw();setTimeout(resetView,50)}
+function collapseAll(){NODES.forEach(nd=>{if(nd.depth>0&&nd.children_ids.length)nd.collapsed=true});draw();setTimeout(resetView,50)}
+function setLevel(lv){
+  NODES.forEach(nd=>{
+    if(nd.children_ids.length){nd.collapsed=nd.depth>=lv}
+  });
+  draw();setTimeout(resetView,50);
+}
+
+function resetView(){
+  layout();
+  const vis=NODES.filter(nd=>nd.visible);
+  if(!vis.length)return;
+  let minX=Infinity,maxX=-Infinity,minY=Infinity,maxY=-Infinity;
+  vis.forEach(nd=>{
+    const l=nd.x-nd.w/2,r=nd.x+nd.w/2,t=nd.y-nd.h/2,b=nd.y+nd.h/2;
+    if(l<minX)minX=l;if(r>maxX)maxX=r;if(t<minY)minY=t;if(b>maxY)maxY=b;
+  });
+  const tw=maxX-minX+100,th=maxY-minY+100;
+  const sx=(W-40)/tw,sy=(H-100)/th;
+  scale=Math.min(sx,sy,1.2)*0.9;
+  const cx=(minX+maxX)/2,cy=(minY+maxY)/2;
+  panX=W/2-cx*scale;
+  panY=H/2+24-cy*scale-H/2-24+H/2+24;
+  // Simplify: center on content
+  panX=W/2-cx*scale;
+  panY=H/2+24-cy*scale;
+  draw();
+}
+
+window.addEventListener("resize",resize);
+resize();
+setTimeout(resetView,100);
+</script>
+</body>
+</html>
